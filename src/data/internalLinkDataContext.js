@@ -37,8 +37,7 @@ export default class InternalLinkDataContext {
         if (isTestMode) {
             return this.getAutocompleteTestData(searchTerm);
         }
-
-        return this.getAxiosInstance().get(autocompleteUrl);
+        return this.getAxiosInstance().get(autocompleteUrl, { withCredentials: true });
     }
 
     /**

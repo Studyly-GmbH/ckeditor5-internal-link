@@ -252,9 +252,19 @@ export default class InternalLinkFormView extends View {
         this.set(PROPERTY_INTERNAL_LINK_ID, '');
         this.dataContext.getAutocompleteItems(this.titleInputView.inputView.element.value)
             .then(response => {
+                response.data = response.data.map(
+                    obj => {
+                        return {
+                            "label" : obj.keyword,
+                            "value": obj.id,
+                            "wiki": obj.wikiPageId
+                        }
+                    }
+                );
                 this.autocomplete.list = response.data;
             })
-            .catch(() => {
+            .catch((e) => {
+                console.log(e);
                 this.autocomplete.list = [];
             });
     }

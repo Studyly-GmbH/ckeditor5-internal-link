@@ -4,7 +4,7 @@
 
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import { createLinkElement } from './util/utils';
-import twostepcaretmovement from '@ckeditor/ckeditor5-typing/src/twostepcaretmovement';
+import { TwoStepCaretMovement } from '@ckeditor/ckeditor5-typing';
 import inlineHighlight from '@ckeditor/ckeditor5-typing/src/utils/inlinehighlight';
 
 import '../theme/editing.css';
@@ -21,7 +21,7 @@ import {
  * It introduces the `internalLinkId="id"` attribute in the model which renders to
  * the view as a `<internallink internalLinkId="1d">` element.
  *
- * @extends module:core/plugin~Plugin
+ * //@extends module:core/plugin~Plugin
  */
 export default class InternalLinkEditing extends Plugin {
 
@@ -66,7 +66,7 @@ export default class InternalLinkEditing extends Plugin {
             });
 
         // Enable two-step caret movement for `internalLinkId` attribute.
-        editor.plugins.get(twostepcaretmovement).registerAttribute(MODEL_INTERNAL_LINK_ID_ATTRIBUTE);
+        editor.plugins.get(TwoStepCaretMovement).registerAttribute(MODEL_INTERNAL_LINK_ID_ATTRIBUTE);
 
         // Setup highlight over selected link.
         inlineHighlight(editor, MODEL_INTERNAL_LINK_ID_ATTRIBUTE, VIEW_INTERNAL_LINK_TAG, CLASS_HIGHLIGHT);
