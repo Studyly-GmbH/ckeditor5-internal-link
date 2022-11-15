@@ -53,7 +53,7 @@ export default class InternalLinkDataContext {
             return this.getTitleTestData(itemId);
         }
 
-        return this.getAxiosInstance().get(titleUrl);
+        return this.getAxiosInstance().get(titleUrl,  { withCredentials: true });
     }
 
     /**

@@ -256,8 +256,8 @@ export default class InternalLinkFormView extends View {
                     obj => {
                         return {
                             "label" : obj.keyword,
-                            "value": obj.id,
-                            "wiki": obj.wikiPageId
+                            //"value": obj.id,
+                            "value": obj.wikiPageId
                         }
                     }
                 );

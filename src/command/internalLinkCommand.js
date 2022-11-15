@@ -61,7 +61,7 @@ export default class InternalLinkCommand extends Command {
             if (this.value) {
                 new InternalLinkDataContext(this.editor).getTitleById(this.value)
                     .then(response => {
-                        this.title = response.data;
+                        this.title = response.data[0].shortDescription; //TODO: change this later
                     })
                     .catch(() => {
                         this.title = t('Error requesting title');
