@@ -94,9 +94,10 @@ export default class InternalLinkActionsView extends View {
         /**
          * The internalLink preview view.
          *
-         * @member {module:ui/view~View}
+         * @member {module:ui/view~ButtonView}
          */
         this.previewButtonView = this.createPreviewButton();
+        this.previewButtonView.delegate('execute').to(this, 'openModal');
 
         /**
          * The unlink button view.
@@ -182,7 +183,6 @@ export default class InternalLinkActionsView extends View {
                     'ck',
                     'ck-link-actions__preview'
                 ],
-                href: bind.to(PROPERTY_INTERNAL_LINK_ID, internalLinkId => { return this.createPreviewUrl(internalLinkId); }),
                 target: '_blank'
             }
         });
@@ -193,8 +193,8 @@ export default class InternalLinkActionsView extends View {
 
         button.bind('isEnabled').to(this, PROPERTY_INTERNAL_LINK_ID, internalLinkId => !!internalLinkId);
 
-        button.template.tag = 'a';
-        button.template.eventListeners = {};
+        //button.template.tag = 'a';
+        //button.template.eventListeners = {};
 
         return button;
     }

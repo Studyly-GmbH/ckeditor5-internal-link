@@ -9,7 +9,8 @@ import UnlinkCommand from './internalUnlinkCommand';
 
 import {
     COMMAND_LINK,
-    COMMAND_UNLINK } from '../util/constants';
+    COMMAND_UNLINK
+} from '../util/constants';
 
 /**
  * Plugin used to register the commands.

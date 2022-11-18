@@ -289,6 +289,13 @@ export default class InternalLinkUi extends Plugin {
             this.hideUI();
         });
 
+        //Execute open modal command after clicking on the "Preview" button.
+        this.listenTo(actionsView, 'openModal', () =>  {
+            //const bind = this.bindTemplate;
+            editor.model.document.fire('openWikiModal', PROPERTY_VALUE);
+            //bind.to(PROPERTY_INTERNAL_LINK_ID, internalLinkId => { editor.model.document.fire('openWikiModal', internalLinkId); });
+        });
+
         // Close the panel on esc key press when the **actions have focus**.
         actionsView.keystrokes.set('Esc', (data, cancel) => {
             this.hideUI();
