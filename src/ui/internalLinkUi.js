@@ -219,10 +219,10 @@ export default class InternalLinkUi extends Plugin {
     }
 
     /**
-     * Creates the {@link module:internalLink/ui/internalInternalLinkFormView~InternalInternalLinkFormView} instance.
+     * Creates the {@link InternalLinkFormView} instance.
      *
      * @private
-     * @returns {module:internalLink/ui/internalInternalLinkFormView~InternalInternalLinkFormView} The link form instance.
+     * @returns {InternalLinkFormView} The link form instance.
      */
     createFormView() {
         const editor = this.editor;
@@ -291,9 +291,7 @@ export default class InternalLinkUi extends Plugin {
 
         //Execute open modal command after clicking on the "Preview" button.
         this.listenTo(actionsView, 'openModal', () =>  {
-            //const bind = this.bindTemplate;
-            editor.model.document.fire('openWikiModal', PROPERTY_VALUE);
-            //bind.to(PROPERTY_INTERNAL_LINK_ID, internalLinkId => { editor.model.document.fire('openWikiModal', internalLinkId); });
+            editor.model.document.fire('openWikiModal', linkCommand.value);
         });
 
         // Close the panel on esc key press when the **actions have focus**.
