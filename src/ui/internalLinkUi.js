@@ -24,6 +24,8 @@ import {
     COMMAND_UNLINK,
     BUTTON_LINK } from '../util/constants';
 
+const mathKeystroke = 'Ctrl+5';
+
 export default class InternalLinkUi extends Plugin {
 
     /**
@@ -81,6 +83,14 @@ export default class InternalLinkUi extends Plugin {
         const editor = this.editor;
         const linkCommand = editor.commands.get(COMMAND_LINK);
         const t = editor.t;
+
+        editor.keystrokes.set( mathKeystroke, ( keyEvtData, cancel ) => {
+            // Prevent focusing the search bar in FF and opening new tab in Edge. #153, #154.
+            cancel();
+            if ( linkCommand.isEnabled ) {
+                this.showUi();
+            }
+        } );
 
         editor.ui.componentFactory.add(BUTTON_LINK, locale => {
             const button = createButton(t('Internal link'), LinkIcon, locale);
