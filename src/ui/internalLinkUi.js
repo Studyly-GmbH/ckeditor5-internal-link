@@ -283,23 +283,18 @@ export default class InternalLinkUi extends Plugin {
         const editor = this.editor;
         const actionsView = new InternalLinkActionsView(editor);
         const linkCommand = editor.commands.get(COMMAND_LINK);
-        const linkConfig = editor.config.get(COMMAND_LINK)
+        //const linkConfig = editor.config.get(COMMAND_LINK)
         const unlinkCommand = editor.commands.get(COMMAND_UNLINK);
+
+        linkCommand.keywordButtonView = actionsView.keywordButtonView;
 
         actionsView.bind(PROPERTY_INTERNAL_LINK_ID).to(linkCommand, PROPERTY_VALUE);
         actionsView.bind(PROPERTY_TITLE).to(linkCommand, PROPERTY_TITLE);
-        //actionsView.bind(PROPERTY_TEMP).to(linkCommand, PROPERTY_TEMP);
-        //actionsView.bind(PROPERTY_INTERNAL_LINK_ID).to(linkCommand, PROPERTY_VALUE);
-
         actionsView.editButtonView.bind('isEnabled').to(linkCommand, 'isEnabled');
         actionsView.unlinkButtonView.bind('isEnabled').to(unlinkCommand, 'isEnabled');
-        linkCommand.bo = actionsView.keywordButtonView;
-        //actionsView.keywordButtonView.bind('label').to(linkCommand, 'keyword')
-        //linkCommand.bind( 'keyword' ).to(actionsView.keywordButtonView, 'label')
 
         // Execute action to show the form after clicking on the "Edit" button.
         this.listenTo(actionsView, 'edit', () => {
-            console.log('shish')
             this.addFormView();
         });
 
@@ -406,7 +401,6 @@ export default class InternalLinkUi extends Plugin {
         if (this.isBalloonInitializedWithForm) {
             return;
         }
-        console.log(COMMAND_LINK);
         const editor = this.editor;
         const linkCommand = editor.commands.get(COMMAND_LINK);
 
@@ -423,7 +417,6 @@ export default class InternalLinkUi extends Plugin {
         // clicked the same link), they would see the old value instead of the actual value of the command.
         // https://github.com/ckeditor/ckeditor5-link/issues/78
         // https://github.com/ckeditor/ckeditor5-link/issues/123
-        this.formView.keyword = linkCommand.keyword || '';
         this.formView.title = linkCommand.title || '';
         this.formView.internallinkid = linkCommand.value || '';
     }

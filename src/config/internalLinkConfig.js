@@ -45,7 +45,6 @@ export default class InternalLinkConfig extends Plugin {
      */
     init() {
         const editor = this.editor;
-      //  editor.config.define(keyword, '');
         editor.config.define(CONFIG_TEST_MODE, false);
         editor.config.define(CONFIG_AUTOCOMPLETE_URL, '');
         editor.config.define(CONFIG_SHORT_DESCRIPTION_URL, '');

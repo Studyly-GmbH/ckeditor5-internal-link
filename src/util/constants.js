@@ -1,5 +1,9 @@
 export const VIEW_INTERNAL_LINK_TAG = 'internallink';
 
+export const VIEW_INTERNAL_KEYWORD_ID_ATTRIBUTE = 'viewKeywordViewId';
+
+export const MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE = 'modelKeywordLinkId';
+
 export const VIEW_INTERNAL_LINK_ID_ATTRIBUTE = 'internallinkid';
 
 export const MODEL_INTERNAL_LINK_ID_ATTRIBUTE = 'internalLinkId';

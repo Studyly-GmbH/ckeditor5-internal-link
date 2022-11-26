@@ -188,8 +188,6 @@ export default class InternalLinkActionsView extends View {
      */
     createKeywordButton() {
         let button = new ButtonView(this.locale);
-        let linkCommand = this.editor.commands.get(COMMAND_LINK);
-        let bind = this.bindTemplate;
         let t = this.t;
 
         button.set({
@@ -207,14 +205,7 @@ export default class InternalLinkActionsView extends View {
             }
         });
 
-//        button.label = linkCommand.keyword
-        //button.bind('label').to(linkCommand, 'keyword' );
-        //button.bind('label').to(this, 'keyword');
-        // this.bind('keyword').to(button, 'label', label => {
-        //     return label || t('No keyword');
-        // })
         button.bind('isEnabled').to(this, PROPERTY_INTERNAL_LINK_ID, internalLinkId => !!internalLinkId);
-        //button.bind('isEnabled').to(this, PROPERTY_KEYWORD_ID, internalLinkId => !!internalLinkId);
 
         return button;
     }
@@ -227,7 +218,6 @@ export default class InternalLinkActionsView extends View {
      */
     createPreviewButton() {
         const button = new ButtonView(this.locale);
-        const bind = this.bindTemplate;
         const t = this.t;
 
         button.set({

@@ -11,8 +11,7 @@ import {
     keyword,
     MODEL_INTERNAL_LINK_ID_ATTRIBUTE,
     PROPERTY_INTERNAL_LINK_ID,
-    PROPERTY_KEYWORD, PROPERTY_TEMP,
-    PROPERTY_TITLE, PROPERTY_VALUE
+    PROPERTY_TITLE
 } from '../util/constants';
 import {ObservableMixin} from "@ckeditor/ckeditor5-utils";
 
@@ -39,7 +38,7 @@ export default class InternalLinkCommand extends Command {
      * @member {Object|undefined} #title
      */
 
-    bo
+    keywordButtonView
 
     keywordId;
 
@@ -76,25 +75,20 @@ export default class InternalLinkCommand extends Command {
                 new InternalLinkDataContext(this.editor).getKeywordById(this.keywordId)
                     .then(response => {
                         this.keyword = response.data[0].keyword;
-                        //this.keyword = response.data.text
-                        //this.set(PROPERTY_TEMP, this.keyword)
-                        if (this.bo !== undefined) {
-                            this.bo.label = response.data[0].keyword;
+                        if (this.keywordButtonView !== undefined) {
+                            this.keywordButtonView.label = response.data[0].keyword;
                         }
                     }).catch((e) => {
                         console.log(e)
-                        this.keyword = 'err';
-                    //keyword = t('Error requesting keyword');
+                        this.keyword = t('Error requesting keyword');
                 });
 
                 new InternalLinkDataContext(this.editor).getShortDescriptionById(this.value)
                     .then(response => {
-                      /*  console.log(response.data);
-                        this.shortDescription = response.data[0].shortDescription;*/
-                       // console.log(response.data)
                         this.title = response.data[0].shortDescription; //TODO: change this later
                     })
-                    .catch(() => {
+                    .catch((e) => {
+                        console.log(e)
                         this.title = t('Error requesting title');
                     });
             } else {
@@ -102,6 +96,7 @@ export default class InternalLinkCommand extends Command {
                 this.keyword = '';
             }
         }
+
     }
 
     /**
