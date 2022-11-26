@@ -7,7 +7,14 @@ import findLinkRange from '../util/findlinkrange';
 import toMap from '@ckeditor/ckeditor5-utils/src/tomap';
 import InternalLinkDataContext from '../data/internalLinkDataContext';
 
-import { MODEL_INTERNAL_LINK_ID_ATTRIBUTE, PROPERTY_TITLE } from '../util/constants';
+import {
+    keyword,
+    MODEL_INTERNAL_LINK_ID_ATTRIBUTE,
+    PROPERTY_INTERNAL_LINK_ID,
+    PROPERTY_KEYWORD, PROPERTY_TEMP,
+    PROPERTY_TITLE, PROPERTY_VALUE
+} from '../util/constants';
+import {ObservableMixin} from "@ckeditor/ckeditor5-utils";
 
 /**
  * The internal link command. It is used by the {@link module:internalLink/internalLink~internalLink internal link feature}.
@@ -32,20 +39,27 @@ export default class InternalLinkCommand extends Command {
      * @member {Object|undefined} #title
      */
 
+    bo
+
+    keywordId;
+
     /**
      * @inheritDoc
      */
     constructor(editor) {
         super(editor);
-
         // Make the title observable
+        //this.set(PROPERTY_KEYWORD, undefined);
+        this.set(keyword, undefined)
         this.set(PROPERTY_TITLE, undefined);
+        this.set(PROPERTY_INTERNAL_LINK_ID, undefined);
     }
 
     /**
      * @inheritDoc
      */
     refresh() {
+
         const model = this.editor.model;
         const doc = model.document;
         const t = this.editor.locale && this.editor.locale.t;
@@ -59,8 +73,25 @@ export default class InternalLinkCommand extends Command {
             this.value = newValue;
 
             if (this.value) {
-                new InternalLinkDataContext(this.editor).getTitleById(this.value)
+                new InternalLinkDataContext(this.editor).getKeywordById(this.keywordId)
                     .then(response => {
+                        this.keyword = response.data[0].keyword;
+                        //this.keyword = response.data.text
+                        //this.set(PROPERTY_TEMP, this.keyword)
+                        if (this.bo !== undefined) {
+                            this.bo.label = response.data[0].keyword;
+                        }
+                    }).catch((e) => {
+                        console.log(e)
+                        this.keyword = 'err';
+                    //keyword = t('Error requesting keyword');
+                });
+
+                new InternalLinkDataContext(this.editor).getShortDescriptionById(this.value)
+                    .then(response => {
+                      /*  console.log(response.data);
+                        this.shortDescription = response.data[0].shortDescription;*/
+                       // console.log(response.data)
                         this.title = response.data[0].shortDescription; //TODO: change this later
                     })
                     .catch(() => {
@@ -68,6 +99,7 @@ export default class InternalLinkCommand extends Command {
                     });
             } else {
                 this.title = '';
+                this.keyword = '';
             }
         }
     }

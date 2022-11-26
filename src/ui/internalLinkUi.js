@@ -22,9 +22,10 @@ import {
     PROPERTY_VALUE,
     COMMAND_LINK,
     COMMAND_UNLINK,
-    BUTTON_LINK } from '../util/constants';
+    BUTTON_LINK, PROPERTY_KEYWORD, PROPERTY_TEMP
+} from '../util/constants';
 
-const mathKeystroke = 'Ctrl+5';
+const keystroke = 'Ctrl+5';
 
 export default class InternalLinkUi extends Plugin {
 
@@ -84,7 +85,7 @@ export default class InternalLinkUi extends Plugin {
         const linkCommand = editor.commands.get(COMMAND_LINK);
         const t = editor.t;
 
-        editor.keystrokes.set( mathKeystroke, ( keyEvtData, cancel ) => {
+        editor.keystrokes.set( keystroke, ( keyEvtData, cancel ) => {
             // Prevent focusing the search bar in FF and opening new tab in Edge. #153, #154.
             cancel();
             if ( linkCommand.isEnabled ) {
@@ -240,7 +241,9 @@ export default class InternalLinkUi extends Plugin {
         const linkCommand = editor.commands.get(COMMAND_LINK);
 
         formView.bind(PROPERTY_INTERNAL_LINK_ID).to(linkCommand, PROPERTY_VALUE);
+
         formView.bind(PROPERTY_TITLE).to(linkCommand, PROPERTY_TITLE);
+        formView.bind(PROPERTY_KEYWORD).to(linkCommand, PROPERTY_KEYWORD);
 
         // Form elements should be read-only when corresponding commands are disabled.
         formView.titleInputView.bind('isReadOnly').to(linkCommand, 'isEnabled', value => !value);
@@ -250,7 +253,7 @@ export default class InternalLinkUi extends Plugin {
             editor.execute(
                 COMMAND_LINK,
                 formView.internallinkid,
-                formView.title);
+                formView.keyword);
 
             this.removeFormView();
         });
@@ -280,16 +283,23 @@ export default class InternalLinkUi extends Plugin {
         const editor = this.editor;
         const actionsView = new InternalLinkActionsView(editor);
         const linkCommand = editor.commands.get(COMMAND_LINK);
+        const linkConfig = editor.config.get(COMMAND_LINK)
         const unlinkCommand = editor.commands.get(COMMAND_UNLINK);
 
         actionsView.bind(PROPERTY_INTERNAL_LINK_ID).to(linkCommand, PROPERTY_VALUE);
         actionsView.bind(PROPERTY_TITLE).to(linkCommand, PROPERTY_TITLE);
+        //actionsView.bind(PROPERTY_TEMP).to(linkCommand, PROPERTY_TEMP);
+        //actionsView.bind(PROPERTY_INTERNAL_LINK_ID).to(linkCommand, PROPERTY_VALUE);
 
         actionsView.editButtonView.bind('isEnabled').to(linkCommand, 'isEnabled');
         actionsView.unlinkButtonView.bind('isEnabled').to(unlinkCommand, 'isEnabled');
+        linkCommand.bo = actionsView.keywordButtonView;
+        //actionsView.keywordButtonView.bind('label').to(linkCommand, 'keyword')
+        //linkCommand.bind( 'keyword' ).to(actionsView.keywordButtonView, 'label')
 
         // Execute action to show the form after clicking on the "Edit" button.
         this.listenTo(actionsView, 'edit', () => {
+            console.log('shish')
             this.addFormView();
         });
 
@@ -396,7 +406,7 @@ export default class InternalLinkUi extends Plugin {
         if (this.isBalloonInitializedWithForm) {
             return;
         }
-
+        console.log(COMMAND_LINK);
         const editor = this.editor;
         const linkCommand = editor.commands.get(COMMAND_LINK);
 
@@ -413,6 +423,7 @@ export default class InternalLinkUi extends Plugin {
         // clicked the same link), they would see the old value instead of the actual value of the command.
         // https://github.com/ckeditor/ckeditor5-link/issues/78
         // https://github.com/ckeditor/ckeditor5-link/issues/123
+        this.formView.keyword = linkCommand.keyword || '';
         this.formView.title = linkCommand.title || '';
         this.formView.internallinkid = linkCommand.value || '';
     }

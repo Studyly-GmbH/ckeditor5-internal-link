@@ -24,7 +24,8 @@ import InternalLinkDataContext from '../data/internalLinkDataContext';
 
 import {
     PROPERTY_INTERNAL_LINK_ID,
-    PROPERTY_TITLE
+    PROPERTY_TITLE,
+    PROPERTY_KEYWORD_ID, PROPERTY_KEYWORD
 } from '../util/constants';
 
 import '../../theme/internallinkform.css';
@@ -53,6 +54,14 @@ export default class InternalLinkFormView extends View {
          * @member {String}
          */
         this.set(PROPERTY_INTERNAL_LINK_ID);
+
+        /**
+         * Value of the "title" attribute of the link to use in the {@link #previewButtonView}.
+         *
+         * @observable
+         * @member {String}
+         */
+        this.set(PROPERTY_KEYWORD);
 
         /**
          * Value of the "title" attribute of the link to use in the {@link #previewButtonView}.
@@ -155,7 +164,6 @@ export default class InternalLinkFormView extends View {
      */
     render() {
         super.render();
-
         this.initAutocomplete();
 
         submitHandler({
@@ -192,7 +200,7 @@ export default class InternalLinkFormView extends View {
 
         const labeledInput = new LabeledInputView(this.locale, InputTextView);
         labeledInput.inputView.placeholder = t('Enter title');
-        labeledInput.bind('value').to(this, PROPERTY_TITLE);
+        labeledInput.bind('value').to(this, PROPERTY_KEYWORD); //TODO
 
         return labeledInput;
     }
@@ -217,11 +225,14 @@ export default class InternalLinkFormView extends View {
 
         this.titleInputView.inputView.element.addEventListener('awesomplete-selectcomplete', function(event) {
             // Reset the value to ensure that the observables are triggered even if the same value is selected.
+            this.set(PROPERTY_KEYWORD_ID, '');
             this.set(PROPERTY_INTERNAL_LINK_ID, '');
             this.set(PROPERTY_TITLE, '');
+            //this.set(PROPERTY_KEYWORD, '');
 
+            this.set(PROPERTY_KEYWORD_ID, event.text.id);
             this.set(PROPERTY_INTERNAL_LINK_ID, event.text.value);
-            this.set(PROPERTY_TITLE, event.text.label);
+            this.set(PROPERTY_KEYWORD, event.text.label);
         }.bind(this));
 
     }
@@ -256,7 +267,7 @@ export default class InternalLinkFormView extends View {
                     obj => {
                         return {
                             "label" : obj.keyword,
-                            //"value": obj.id,
+                            "keywordId": obj.id,
                             "value": obj.wikiPageId
                         }
                     }
