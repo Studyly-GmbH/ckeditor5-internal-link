@@ -8,7 +8,7 @@ import toMap from '@ckeditor/ckeditor5-utils/src/tomap';
 import InternalLinkDataContext from '../data/internalLinkDataContext';
 
 import {
-    keyword,
+    MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE,
     MODEL_INTERNAL_LINK_ID_ATTRIBUTE,
     PROPERTY_INTERNAL_LINK_ID,
     PROPERTY_TITLE
@@ -38,7 +38,9 @@ export default class InternalLinkCommand extends Command {
      * @member {Object|undefined} #title
      */
 
-    keywordButtonView
+    keywordButtonView;
+
+    keyword;
 
     keywordId;
 
@@ -49,7 +51,6 @@ export default class InternalLinkCommand extends Command {
         super(editor);
         // Make the title observable
         //this.set(PROPERTY_KEYWORD, undefined);
-        this.set(keyword, undefined)
         this.set(PROPERTY_TITLE, undefined);
         this.set(PROPERTY_INTERNAL_LINK_ID, undefined);
     }
@@ -64,7 +65,8 @@ export default class InternalLinkCommand extends Command {
         const t = this.editor.locale && this.editor.locale.t;
 
         // Checks whether the attribute is allowed in selection (returns true if the attribute is not existing)
-        this.isEnabled = model.schema.checkAttributeInSelection(doc.selection, MODEL_INTERNAL_LINK_ID_ATTRIBUTE);
+        this.isEnabled = model.schema.checkAttributeInSelection(doc.selection, MODEL_INTERNAL_LINK_ID_ATTRIBUTE)
+            // && model.schema.checkAttributeInSelection(doc.selection, MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE);
 
         const newValue = doc.selection.getAttribute(MODEL_INTERNAL_LINK_ID_ATTRIBUTE);
 
@@ -72,17 +74,6 @@ export default class InternalLinkCommand extends Command {
             this.value = newValue;
 
             if (this.value) {
-                new InternalLinkDataContext(this.editor).getKeywordById(this.keywordId)
-                    .then(response => {
-                        this.keyword = response.data[0].keyword;
-                        if (this.keywordButtonView !== undefined) {
-                            this.keywordButtonView.label = response.data[0].keyword;
-                        }
-                    }).catch((e) => {
-                        console.log(e)
-                        this.keyword = t('Error requesting keyword');
-                });
-
                 new InternalLinkDataContext(this.editor).getShortDescriptionById(this.value)
                     .then(response => {
                         this.title = response.data[0].shortDescription; //TODO: change this later
@@ -93,6 +84,30 @@ export default class InternalLinkCommand extends Command {
                     });
             } else {
                 this.title = '';
+            }
+        }
+
+        const newKeywordId = doc.selection.getAttribute(MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE);
+        console.log('keywordcheck')
+        console.log(this.keyword);
+        console.log(newKeywordId);
+
+        if (this.keywordId !== newKeywordId) {
+            this.keywordId = newKeywordId;
+
+            if (this.keyword || true) {
+                new InternalLinkDataContext(this.editor).getKeywordById(this.keywordId)
+                    .then(response => {
+                        this.keyword = response.data[0].keyword;
+                        console.log(this.keyword)
+                        if (this.keywordButtonView !== undefined) {
+                            this.keywordButtonView.label = response.data[0].keyword;
+                        }
+                    }).catch((e) => {
+                    console.log(e)
+                    this.keyword = t('Error requesting keyword');
+                });
+            } else {
                 this.keyword = '';
             }
         }
@@ -115,8 +130,10 @@ export default class InternalLinkCommand extends Command {
      * @fires execute
      * @param {String} internalLinkId Link destination.
      * @param {String} internalLinkText Link text that is rendered if there is no selection otherwise the selected text will be rendered.
+     * @param {String} keywordId Id of keyword
      */
-    execute(internalLinkId, internalLinkText) {
+    execute(internalLinkId, internalLinkText, keywordId) {
+        console.log('exeCute');
         const model = this.editor.model;
         const selection = model.document.selection;
 
@@ -134,7 +151,7 @@ export default class InternalLinkCommand extends Command {
                         model);
 
                     writer.setAttribute(MODEL_INTERNAL_LINK_ID_ATTRIBUTE, internalLinkId, linkRange);
-
+                    writer.setAttribute(MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE, keywordId, linkRange);
                     // Create new range wrapping changed link.
                     writer.setSelection(linkRange);
                 }
@@ -145,6 +162,7 @@ export default class InternalLinkCommand extends Command {
                     const attributes = toMap(selection.getAttributes());
 
                     attributes.set(MODEL_INTERNAL_LINK_ID_ATTRIBUTE, internalLinkId);
+                    attributes.set(MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE, keywordId)
 
                     const node = writer.createText(internalLinkText, attributes);
 
@@ -159,6 +177,12 @@ export default class InternalLinkCommand extends Command {
                 const ranges = model.schema.getValidRanges(selection.getRanges(), MODEL_INTERNAL_LINK_ID_ATTRIBUTE);
 
                 for (const range of ranges) {
+                    writer.setAttribute(MODEL_INTERNAL_LINK_ID_ATTRIBUTE, internalLinkId, range);
+                }
+
+                const rangesKeyword = model.schema.getValidRanges(selection.getRanges(), MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE);
+
+                for (const range of rangesKeyword) {
                     writer.setAttribute(MODEL_INTERNAL_LINK_ID_ATTRIBUTE, internalLinkId, range);
                 }
             }

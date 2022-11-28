@@ -1,8 +1,8 @@
 export const VIEW_INTERNAL_LINK_TAG = 'internallink';
 
-export const VIEW_INTERNAL_KEYWORD_ID_ATTRIBUTE = 'viewKeywordViewId';
+export const VIEW_INTERNAL_KEYWORD_ID_ATTRIBUTE = 'keywordId';
 
-export const MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE = 'modelKeywordLinkId';
+export const MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE = 'keywordId';
 
 export const VIEW_INTERNAL_LINK_ID_ATTRIBUTE = 'internallinkid';
 
@@ -16,11 +16,9 @@ export const COMMAND_UNLINK = 'internalUnlink';
 
 export const PROPERTY_INTERNAL_LINK_ID = 'internallinkid';
 
-export const PROPERTY_KEYWORD_ID = 'keywordid';
+export let PROPERTY_KEYWORD_ID = 'keywordid';
 
-export const PROPERTY_KEYWORD = 'keyword';
-
-export let PROPERTY_TEMP = 'keyword';
+export let PROPERTY_KEYWORD = 'keyword';
 
 export let keyword = '';
 

@@ -22,7 +22,7 @@ import {
     PROPERTY_VALUE,
     COMMAND_LINK,
     COMMAND_UNLINK,
-    BUTTON_LINK, PROPERTY_KEYWORD, PROPERTY_TEMP
+    BUTTON_LINK, PROPERTY_KEYWORD, PROPERTY_KEYWORD_ID
 } from '../util/constants';
 
 const keystroke = 'Ctrl+5';
@@ -245,6 +245,8 @@ export default class InternalLinkUi extends Plugin {
         formView.bind(PROPERTY_TITLE).to(linkCommand, PROPERTY_TITLE);
         formView.bind(PROPERTY_KEYWORD).to(linkCommand, PROPERTY_KEYWORD);
 
+
+
         // Form elements should be read-only when corresponding commands are disabled.
         formView.titleInputView.bind('isReadOnly').to(linkCommand, 'isEnabled', value => !value);
 
@@ -253,7 +255,8 @@ export default class InternalLinkUi extends Plugin {
             editor.execute(
                 COMMAND_LINK,
                 formView.internallinkid,
-                formView.keyword);
+                formView.keyword,
+                PROPERTY_KEYWORD_ID);
 
             this.removeFormView();
         });
@@ -417,6 +420,9 @@ export default class InternalLinkUi extends Plugin {
         // clicked the same link), they would see the old value instead of the actual value of the command.
         // https://github.com/ckeditor/ckeditor5-link/issues/78
         // https://github.com/ckeditor/ckeditor5-link/issues/123
+        console.log('addFormView')
+        console.log(this.formView)
+        this.formView.keyword = linkCommand.keyword || '';
         this.formView.title = linkCommand.title || '';
         this.formView.internallinkid = linkCommand.value || '';
     }

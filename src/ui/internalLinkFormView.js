@@ -212,11 +212,11 @@ export default class InternalLinkFormView extends View {
 
         this.autocomplete = new Awesomplete(this.titleInputView.inputView.element, {
             list: [],
-            filter() {
+            filter(e) {
                 // Dont filter client side. The web service returns the data that should be shown only.
                 return true;
             },
-            replace() {
+            replace(e) {
                 // Dont replace the value. We are using our binding. See awesomplete-selectcomplete event.
             }
         });
@@ -230,9 +230,12 @@ export default class InternalLinkFormView extends View {
             this.set(PROPERTY_TITLE, '');
             //this.set(PROPERTY_KEYWORD, '');
 
-            this.set(PROPERTY_KEYWORD_ID, event.text.id);
-            this.set(PROPERTY_INTERNAL_LINK_ID, event.text.value);
+            console.log('.addEventListener(\'awesomplete-selectcomplete\', function(event) {')
+
+            this.set(PROPERTY_INTERNAL_LINK_ID, event.text.value[0]);
+            PROPERTY_KEYWORD_ID = event.text.value[1]
             this.set(PROPERTY_KEYWORD, event.text.label);
+            console.log(PROPERTY_KEYWORD)
         }.bind(this));
 
     }
@@ -267,8 +270,7 @@ export default class InternalLinkFormView extends View {
                     obj => {
                         return {
                             "label" : obj.keyword,
-                            "keywordId": obj.id,
-                            "value": obj.wikiPageId
+                            "value": [obj.wikiPageId, obj.id]
                         }
                     }
                 );

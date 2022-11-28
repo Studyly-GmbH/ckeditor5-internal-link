@@ -19,7 +19,7 @@ import pencilIcon from '@ckeditor/ckeditor5-core/theme/icons/pencil.svg';
 import {
     PROPERTY_INTERNAL_LINK_ID,
     PROPERTY_TITLE,
-    PROPERTY_KEYWORD, PROPERTY_KEYWORD_ID, PROPERTY_TEMP, COMMAND_LINK, keyword
+    keyword
 } from '../util/constants';
 
 import '../../theme/internallinkactions.css';

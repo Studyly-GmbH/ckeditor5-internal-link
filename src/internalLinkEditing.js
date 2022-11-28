@@ -13,7 +13,9 @@ import {
     VIEW_INTERNAL_LINK_TAG,
     VIEW_INTERNAL_LINK_ID_ATTRIBUTE,
     MODEL_INTERNAL_LINK_ID_ATTRIBUTE,
-    CLASS_HIGHLIGHT } from './util/constants';
+    MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE,
+    CLASS_HIGHLIGHT, VIEW_INTERNAL_KEYWORD_ID_ATTRIBUTE
+} from './util/constants';
 
 /**
  * The link engine feature.
@@ -32,12 +34,30 @@ export default class InternalLinkEditing extends Plugin {
         const editor = this.editor;
 
         // Allow link attribute on all inline nodes.
-        editor.model.schema.extend('$text', { allowAttributes: MODEL_INTERNAL_LINK_ID_ATTRIBUTE });
+        editor.model.schema.extend('$text', { allowAttributes: MODEL_INTERNAL_LINK_ID_ATTRIBUTE, MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE });
 
         editor.conversion.for('dataDowncast')
             .attributeToElement({
                 model: MODEL_INTERNAL_LINK_ID_ATTRIBUTE,
                 view: createLinkElement });
+
+        editor.conversion.for( 'downcast' ).add( dispatcher =>
+            dispatcher.on( `attribute:keywordId:${ MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE }`, ( evt, data, conversionApi ) => {
+            if ( !conversionApi.consumable.consume( data.item, evt.name ) ) {
+                return;
+            }
+
+            const viewWriter = conversionApi.writer;
+            const element = conversionApi.mapper.toViewElement( data.item );
+
+            if ( data.attributeNewValue !== null ) {
+                viewWriter.setAttribute( VIEW_INTERNAL_KEYWORD_ID_ATTRIBUTE,  data.attributeNewValue, element );
+//                viewWriter.addClass( 'image_copyright', element );
+            } else {
+                viewWriter.removeAttribute( VIEW_INTERNAL_KEYWORD_ID_ATTRIBUTE, element );
+//                viewWriter.removeClass( 'image_copyright', element );
+            }
+        } ));
 
         editor.conversion.for('editingDowncast')
             .attributeToElement({
@@ -62,7 +82,25 @@ export default class InternalLinkEditing extends Plugin {
                     key: MODEL_INTERNAL_LINK_ID_ATTRIBUTE,
                     // The html tag attribute
                     value: viewElement => viewElement.getAttribute(VIEW_INTERNAL_LINK_ID_ATTRIBUTE)
-                }
+                },
+                upcastAlso: [
+                    'keywordId',
+/*                    viewElement => {
+                        const fontWeight = viewElement.getStyle( 'font-weight' );
+
+                        if ( !fontWeight ) {
+                            return null;
+                        }
+
+                        // Value of the `font-weight` attribute can be defined as a string or a number.
+                        if ( fontWeight == 'bold' || Number( fontWeight ) >= 600 ) {
+                            return {
+                                name: true,
+                                styles: [ 'font-weight' ]
+                            };
+                        }
+                    }*/
+                ]
             });
 
         // Enable two-step caret movement for `internalLinkId` attribute.
