@@ -89,7 +89,7 @@ export default class InternalLinkEditing extends Plugin {
                 if (data.viewItem.getAttribute('keywordid')) {
                     console.log('keywordid')
                     console.log(data.viewItem.getAttribute('keywordid'))
-                    keywordId = data.viewItem.getAttribute('internallinkid');
+                    keywordId = data.viewItem.getAttribute('keywordid');
                 }
                 if ( !data.modelRange ) {
                     data = Object.assign( data, conversionApi.convertChildren( data.viewItem, data.modelCursor ) );
