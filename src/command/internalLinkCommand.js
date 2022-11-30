@@ -88,7 +88,7 @@ export default class InternalLinkCommand extends Command {
         }
 
         const newKeywordId = doc.selection.getAttribute(MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE);
-
+        console.log(newKeywordId);
         if (this.keywordId !== newKeywordId) {
             this.keywordId = newKeywordId;
 
