@@ -11,15 +11,13 @@ import FocusTracker from '@ckeditor/ckeditor5-utils/src/focustracker';
 import KeystrokeHandler from '@ckeditor/ckeditor5-utils/src/keystrokehandler';
 
 import { createButton, createFocusCycler, registerFocusableViews } from './uiUtils';
-import { replacePlaceholderInUrl } from '../util/utils';
 
 import unlinkIcon from '../../theme/icons/unlink.svg';
 import pencilIcon from '@ckeditor/ckeditor5-core/theme/icons/pencil.svg';
 
 import {
     PROPERTY_INTERNAL_LINK_ID,
-    PROPERTY_TITLE,
-    keyword
+    PROPERTY_TITLE
 } from '../util/constants';
 
 import '../../theme/internallinkactions.css';
@@ -58,14 +56,6 @@ export default class InternalLinkActionsView extends View {
         this.set(PROPERTY_TITLE);
 
         /**
-         * Value of the "title" attribute of the link to use in the {@link #previewButtonView}.
-         *
-         * @observable
-         * @member {String}
-         */
-        this.set(keyword);
-
-        /**
          * A collection of views which can be focused in the form.
          *
          * @readonly
@@ -98,7 +88,6 @@ export default class InternalLinkActionsView extends View {
          * @member {module:ui/focuscycler~FocusCycler}
          */
         this.focusCycler = createFocusCycler(this.focusables, this.focusTracker, this.keystrokes);
-
 
         /**
          * The internalLink preview view.

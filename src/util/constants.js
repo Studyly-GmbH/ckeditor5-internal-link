@@ -20,8 +20,6 @@ export let PROPERTY_KEYWORD_ID = 'keywordid';
 
 export let PROPERTY_KEYWORD = 'keyword';
 
-export let keyword = '';
-
 export const PROPERTY_TITLE = 'title';
 
 export const PROPERTY_VALUE = 'value';

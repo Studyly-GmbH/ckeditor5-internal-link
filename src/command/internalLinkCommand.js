@@ -13,7 +13,6 @@ import {
     PROPERTY_INTERNAL_LINK_ID,
     PROPERTY_TITLE
 } from '../util/constants';
-import {ObservableMixin} from "@ckeditor/ckeditor5-utils";
 
 /**
  * The internal link command. It is used by the {@link module:internalLink/internalLink~internalLink internal link feature}.
@@ -79,7 +78,11 @@ export default class InternalLinkCommand extends Command {
                         this.title = response.data[0].shortDescription; //TODO: change this later
                     })
                     .catch((e) => {
-                        console.log(e)
+                        if (e.name === "AxiosError") {
+                            console.log('axiosError', e.code, e.message)
+                        } else {
+                            console.log(e);
+                        }
                         this.title = t('Error requesting title');
                     });
             } else {
@@ -88,7 +91,6 @@ export default class InternalLinkCommand extends Command {
         }
 
         const newKeywordId = doc.selection.getAttribute(MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE);
-        console.log(newKeywordId);
         if (this.keywordId !== newKeywordId) {
             this.keywordId = newKeywordId;
 
@@ -100,7 +102,11 @@ export default class InternalLinkCommand extends Command {
                             this.keywordButtonView.label = response.data.keyword;
                         }
                     }).catch((e) => {
-                    console.log(e)
+                    if (e.name === "AxiosError") {
+                        console.log('axiosError', e.code, e.message)
+                    } else {
+                        console.log(e);
+                    }
                     this.keyword = t('Error requesting keyword');
                 });
             } else {
