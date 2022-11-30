@@ -1,6 +1,6 @@
 export const VIEW_INTERNAL_LINK_TAG = 'internallink';
 
-export const VIEW_INTERNAL_KEYWORD_ID_ATTRIBUTE = 'keywordId';
+export const VIEW_INTERNAL_KEYWORD_ID_ATTRIBUTE = 'keywordid';
 
 export const MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE = 'keywordId';
 

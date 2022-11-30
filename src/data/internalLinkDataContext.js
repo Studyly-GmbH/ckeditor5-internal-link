@@ -65,7 +65,7 @@ export default class InternalLinkDataContext {
     getKeywordById(itemId) {
 
         if (itemId == undefined) {
-            itemId = '1';
+            console.warn('itemId is undefind')
         }
 
         const isTestMode = this.editor.config.get(CONFIG_TEST_MODE);

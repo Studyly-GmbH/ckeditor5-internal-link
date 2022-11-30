@@ -88,20 +88,16 @@ export default class InternalLinkCommand extends Command {
         }
 
         const newKeywordId = doc.selection.getAttribute(MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE);
-        console.log('keywordcheck')
-        console.log(this.keyword);
-        console.log(newKeywordId);
 
         if (this.keywordId !== newKeywordId) {
             this.keywordId = newKeywordId;
 
-            if (this.keyword || true) {
+            if (this.keywordId) {
                 new InternalLinkDataContext(this.editor).getKeywordById(this.keywordId)
                     .then(response => {
-                        this.keyword = response.data[0].keyword;
-                        console.log(this.keyword)
+                        this.keyword = response.data.keyword;
                         if (this.keywordButtonView !== undefined) {
-                            this.keywordButtonView.label = response.data[0].keyword;
+                            this.keywordButtonView.label = response.data.keyword;
                         }
                     }).catch((e) => {
                     console.log(e)
@@ -109,6 +105,10 @@ export default class InternalLinkCommand extends Command {
                 });
             } else {
                 this.keyword = '';
+                this.keywordId = undefined;
+                if (this.keywordButtonView !== undefined) {
+                    this.keywordButtonView.label = '';
+                }
             }
         }
 
@@ -133,7 +133,7 @@ export default class InternalLinkCommand extends Command {
      * @param {String} keywordId Id of keyword
      */
     execute(internalLinkId, internalLinkText, keywordId) {
-        console.log('exeCute');
+
         const model = this.editor.model;
         const selection = model.document.selection;
 

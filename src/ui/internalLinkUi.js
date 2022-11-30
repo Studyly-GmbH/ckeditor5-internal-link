@@ -420,8 +420,6 @@ export default class InternalLinkUi extends Plugin {
         // clicked the same link), they would see the old value instead of the actual value of the command.
         // https://github.com/ckeditor/ckeditor5-link/issues/78
         // https://github.com/ckeditor/ckeditor5-link/issues/123
-        console.log('addFormView')
-        console.log(this.formView)
         this.formView.keyword = linkCommand.keyword || '';
         this.formView.title = linkCommand.title || '';
         this.formView.internallinkid = linkCommand.value || '';

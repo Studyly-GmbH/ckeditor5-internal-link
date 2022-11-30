@@ -230,12 +230,9 @@ export default class InternalLinkFormView extends View {
             this.set(PROPERTY_TITLE, '');
             //this.set(PROPERTY_KEYWORD, '');
 
-            console.log('.addEventListener(\'awesomplete-selectcomplete\', function(event) {')
-
             this.set(PROPERTY_INTERNAL_LINK_ID, event.text.value[0]);
             PROPERTY_KEYWORD_ID = event.text.value[1]
             this.set(PROPERTY_KEYWORD, event.text.label);
-            console.log(PROPERTY_KEYWORD)
         }.bind(this));
 
     }
