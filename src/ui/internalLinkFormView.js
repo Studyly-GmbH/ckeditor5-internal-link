@@ -270,6 +270,14 @@ export default class InternalLinkFormView extends View {
                             "value": [obj.wikiPageId, obj.id]
                         }
                     }
+                //                        obj => {
+                //                         return {
+                //                                     "label" : obj.keyword + ' - ' +  wikiTitlesToString(obj.wikiTitles),
+                //                                     "value": [obj.wikiPageId, obj.id]
+                //                                 }
+                //                         }
+                //                         reduce()
+                //                     }
                 );
                 this.autocomplete.list = response.data;
             })

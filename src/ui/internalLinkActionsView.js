@@ -181,7 +181,7 @@ export default class InternalLinkActionsView extends View {
 
         button.set({
             withText: true,
-            tooltip: t('Open link in new tab')
+            tooltip: t('keyword')
         });
 
         button.extendTemplate({
@@ -211,7 +211,7 @@ export default class InternalLinkActionsView extends View {
 
         button.set({
             withText: true,
-            tooltip: t('Open link in new tab')
+            tooltip: t('show preview of wiki')
         });
 
         button.extendTemplate({
