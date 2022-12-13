@@ -6,6 +6,7 @@ import Command from '@ckeditor/ckeditor5-core/src/command';
 import findLinkRange from '../util/findlinkrange';
 import toMap from '@ckeditor/ckeditor5-utils/src/tomap';
 import InternalLinkDataContext from '../data/internalLinkDataContext';
+import InternalLinkUi from "../ui/internalLinkUi";
 
 import {
     MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE,
@@ -43,6 +44,7 @@ export default class InternalLinkCommand extends Command {
 
     keywordId;
 
+    ui;
     /**
      * @inheritDoc
      */
@@ -84,6 +86,8 @@ export default class InternalLinkCommand extends Command {
                             console.log(e);
                         }
                         this.title = t('Error requesting title');
+                    }).then(_ => {
+                        this.ui.fireEvent();
                     });
             } else {
                 this.title = '';

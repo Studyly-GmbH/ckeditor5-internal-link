@@ -36,12 +36,15 @@ export default class InternalLinkUi extends Plugin {
         return [ContextualBalloon];
     }
 
+    fireCounter = 3;
+
     /**
      * @inheritDoc
      */
     init() {
         const editor = this.editor;
-
+        const linkCommand = editor.commands.get(COMMAND_LINK);
+        linkCommand.ui = this;
         // Note that this observer is not available by default.
         // See: https://docs.ckeditor.com/ckeditor5/latest/api/module_engine_view_observer_clickobserver-ClickObserver.html
         editor.editing.view.addObserver(ClickObserver);
@@ -123,18 +126,21 @@ export default class InternalLinkUi extends Plugin {
 
         // When there's no link under the selection, go straight to the editing UI.
         if (!this.getSelectedLinkElement()) {
-            this.addActionsView();
+            this.addActionsView(false);
+            console.log('1')
             this.addFormView();
         }
         // If theres a link under the selection...
         else {
             // Go to the editing UI if actions are already visible.
             if (this.areActionsVisible) {
+                console.log('2')
                 this.addFormView();
             }
             // Otherwise display just the actions UI.
             else {
-                this.addActionsView();
+                console.log('3')
+                this.addActionsView(true);
             }
         }
 
@@ -289,6 +295,7 @@ export default class InternalLinkUi extends Plugin {
         //const linkConfig = editor.config.get(COMMAND_LINK)
         const unlinkCommand = editor.commands.get(COMMAND_UNLINK);
 
+        actionsView.ui = this;
         linkCommand.keywordButtonView = actionsView.keywordButtonView;
 
         actionsView.bind(PROPERTY_INTERNAL_LINK_ID).to(linkCommand, PROPERTY_VALUE);
@@ -383,16 +390,28 @@ export default class InternalLinkUi extends Plugin {
      *
      * @protected
      */
-    addActionsView() {
+    addActionsView(fire) {
         // Do nothing if the actions are visible already.
         if (this.isBalloonInitializedWithActions) {
             return;
         }
-
+        if (this.actionsView.previewButtonView && fire) {
+            this.fireEvent()
+        }
         this.balloon.add({
             view: this.actionsView,
             position: this.getBalloonPositionData()
         });
+    }
+
+
+    fireEvent() {
+        this.fireCounter--;
+        if (this.fireCounter === 0) {
+            //console.log(this.actionsView.previewButtonView)
+            this.editor.model.document.fire('test', this.actionsView.previewButtonView);
+            this.fireCounter = 2;
+        }
     }
 
     /**

@@ -39,6 +39,8 @@ export default class InternalLinkActionsView extends View {
         const t = this.locale.t;
         this.editor = editor;
 
+        this.ui = null;
+
         /**
          * Value of the "internalLinkId" attribute of the link to use in the {@link #previewButtonView}.
          *
@@ -95,7 +97,6 @@ export default class InternalLinkActionsView extends View {
          * @member {module:ui/view~ButtonView}
          */
         this.keywordButtonView = this.createKeywordButton();
-        //this.keywordButtonView.delegate('execute').to(this, 'openModal');
 
         /**
          * The internalLink preview view.
@@ -160,6 +161,9 @@ export default class InternalLinkActionsView extends View {
         // They ensure that focus is working correctly and that we can handle button clicks
         registerFocusableViews(childViews, this.focusables, this.focusTracker);
         this.keystrokes.listenTo(this.element);
+        if (this.ui) {
+            this.ui.fireEvent()
+        }
     }
 
     /**
@@ -225,6 +229,9 @@ export default class InternalLinkActionsView extends View {
         });
 
         button.bind('label').to(this, PROPERTY_TITLE, linkTitle => {
+/*            if (button.element != null) {
+                this.editor.model.document.fire('test', button.element);
+            }*/
             return linkTitle || t('This link is invalid');
         });
 
