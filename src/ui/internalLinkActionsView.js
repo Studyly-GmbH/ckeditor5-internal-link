@@ -162,7 +162,7 @@ export default class InternalLinkActionsView extends View {
         registerFocusableViews(childViews, this.focusables, this.focusTracker);
         this.keystrokes.listenTo(this.element);
         if (this.ui) {
-            this.ui.fireEvent()
+            this.ui.fireEvent(0) // only needs to be fired once
         }
     }
 

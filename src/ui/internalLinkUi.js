@@ -36,7 +36,11 @@ export default class InternalLinkUi extends Plugin {
         return [ContextualBalloon];
     }
 
-    fireCounter = 3;
+    fireIds = {
+        0: false,
+        1: false,
+        2: false
+    }
 
     /**
      * @inheritDoc
@@ -139,7 +143,6 @@ export default class InternalLinkUi extends Plugin {
             }
             // Otherwise display just the actions UI.
             else {
-                console.log('3')
                 this.addActionsView(true);
             }
         }
@@ -396,7 +399,7 @@ export default class InternalLinkUi extends Plugin {
             return;
         }
         if (this.actionsView.previewButtonView && fire) {
-            this.fireEvent()
+            this.fireEvent(2); //fires everytime when the actionview is opened
         }
         this.balloon.add({
             view: this.actionsView,
@@ -405,12 +408,13 @@ export default class InternalLinkUi extends Plugin {
     }
 
 
-    fireEvent() {
-        this.fireCounter--;
-        if (this.fireCounter === 0) {
+    fireEvent(id) {
+        this.fireIds[id] = true
+        if (this.fireIds[0] && this.fireIds[1] && this.fireIds[2]) {
             //console.log(this.actionsView.previewButtonView)
+            this.fireIds[1] = false;
+            this.fireIds[2] = false;
             this.editor.model.document.fire('test', this.actionsView.previewButtonView);
-            this.fireCounter = 2;
         }
     }
 

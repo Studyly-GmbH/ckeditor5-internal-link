@@ -87,7 +87,7 @@ export default class InternalLinkCommand extends Command {
                         }
                         this.title = t('Error requesting title');
                     }).then(_ => {
-                        this.ui.fireEvent();
+                        this.ui.fireEvent(1); //fires everytime when the new short description is loaded
                     });
             } else {
                 this.title = '';

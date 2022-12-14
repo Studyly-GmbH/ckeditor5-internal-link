@@ -266,8 +266,8 @@ export default class InternalLinkFormView extends View {
                 response.data = response.data.map(
                     obj => {
                         return {
-                            "label" : obj.keyword,
-                            "value": [obj.wikiPageId, obj.id]
+                            "label" : obj.keyword /*+ ' - ' + this.wikiTitlesToString(obj.searchWikiPage.titles)*/,
+                            "value": [obj.searchWikiPage.id, obj.keywordId]
                         }
                     }
                 //                        obj => {
@@ -278,8 +278,12 @@ export default class InternalLinkFormView extends View {
                 //                         }
                 //                         reduce()
                 //                     }
-                );
+            );
+
                 this.autocomplete.list = response.data;
+
+                console.log(this.autocomplete)
+                console.log(this.dataContext)
             })
             .catch((e) => {
                 if (e.name === "AxiosError") {
@@ -298,6 +302,10 @@ export default class InternalLinkFormView extends View {
         if (this.autocomplete) {
             this.autocomplete.destroy();
         }
+    }
+
+    wikiTitlesToString(list) {
+        return list.join(', ')
     }
 
 }
