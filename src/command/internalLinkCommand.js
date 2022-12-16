@@ -38,13 +38,6 @@ export default class InternalLinkCommand extends Command {
      * @member {Object|undefined} #title
      */
 
-    keywordButtonView;
-
-    keyword;
-
-    keywordId;
-
-    ui;
     /**
      * @inheritDoc
      */
