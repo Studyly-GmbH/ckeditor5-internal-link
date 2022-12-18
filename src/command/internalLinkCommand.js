@@ -6,7 +6,6 @@ import Command from '@ckeditor/ckeditor5-core/src/command';
 import findLinkRange from '../util/findlinkrange';
 import toMap from '@ckeditor/ckeditor5-utils/src/tomap';
 import InternalLinkDataContext from '../data/internalLinkDataContext';
-import InternalLinkUi from "../ui/internalLinkUi";
 
 import {
     MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE,
@@ -47,6 +46,13 @@ export default class InternalLinkCommand extends Command {
         //this.set(PROPERTY_KEYWORD, undefined);
         this.set(PROPERTY_TITLE, undefined);
         this.set(PROPERTY_INTERNAL_LINK_ID, undefined);
+        this.keywordButtonView = undefined;
+
+        this.keyword = undefined;
+
+        this.keywordId = undefined;
+
+        this.ui = undefined;
     }
 
     /**
