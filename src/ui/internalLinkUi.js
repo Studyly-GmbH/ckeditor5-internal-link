@@ -447,6 +447,7 @@ export default class InternalLinkUi extends Plugin {
         this.formView.keyword = linkCommand.keyword || '';
         this.formView.title = linkCommand.title || '';
         this.formView.internallinkid = linkCommand.value || '';
+        this.formView.callLoadAutocompleteData();
     }
 
     /**

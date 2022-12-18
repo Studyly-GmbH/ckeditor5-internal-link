@@ -259,6 +259,12 @@ export default class InternalLinkFormView extends View {
         }.bind(this);
     }
 
+    callLoadAutocompleteData() {
+        let timeout = null;
+        clearTimeout(timeout);
+        timeout = setTimeout(this.loadAutocompleteData(), 500);
+    }
+
     loadAutocompleteData() {
         this.set(PROPERTY_INTERNAL_LINK_ID, '');
         this.dataContext.getAutocompleteItems(this.titleInputView.inputView.element.value)
