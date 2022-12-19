@@ -15,9 +15,9 @@ import {
 } from '../util/constants';
 
 /**
- * The internal link command. It is used by the {@link module:internalLink/internalLink~internalLink internal link feature}.
+ * The internal link command. It is used by the {@link module?:internalLink?/internalLink~internalLink internal link feature}.
  *
- * @extends module:core/command~Command
+ * @extends module?:core/command~Command
  */
 export default class InternalLinkCommand extends Command {
 
@@ -130,13 +130,12 @@ export default class InternalLinkCommand extends Command {
      * those nodes where the `internalLinkId` attribute is allowed (disallowed nodes will be omitted).
      *
      * When the selection is collapsed and is not inside the text with the `internalLinkId` attribute, the
-     * new {@link module:engine/model/text~Text Text node} with the `internalLinkId` attribute will be inserted in place of caret, but
+     * new {@link module?:engine/model/text~Text Text node} with the `internalLinkId` attribute will be inserted in place of caret, but
      * only if such element is allowed in this place. The `_data` of the inserted text will equal the `internalLinkId` parameter.
      * The selection will be updated to wrap the just inserted text node.
      *
      * When the selection is collapsed and inside the text with the `internalLinkId` attribute, the attribute value will be updated.
      *
-     * @fires execute
      * @param {String} internalLinkId Link destination.
      * @param {String} internalLinkText Link text that is rendered if there is no selection otherwise the selected text will be rendered.
      * @param {String} keywordId Id of keyword
@@ -153,6 +152,8 @@ export default class InternalLinkCommand extends Command {
 
                 // When selection is inside text with `internalLinkId` attribute.
                 if (selection.hasAttribute(MODEL_INTERNAL_LINK_ID_ATTRIBUTE)) {
+                    console.log(internalLinkId);
+                    console.log(keywordId);
                     // Then update `internalLinkId` value.
                     const linkRange = findLinkRange(
                         selection.getFirstPosition(),
@@ -168,6 +169,8 @@ export default class InternalLinkCommand extends Command {
                 // However, since selection in collapsed, attribute value will be used as data for text node.
                 // So, if `internalLinkId` is empty, do not create text node.
                 else if (internalLinkId !== '') {
+                    console.log(internalLinkId);
+                    console.log(keywordId);
                     const attributes = toMap(selection.getAttributes());
 
                     attributes.set(MODEL_INTERNAL_LINK_ID_ATTRIBUTE, internalLinkId);
@@ -181,6 +184,8 @@ export default class InternalLinkCommand extends Command {
                     writer.setSelection(writer.createRangeOn(node));
                 }
             } else {
+                console.log(internalLinkId);
+                console.log(keywordId);
                 // If selection has non-collapsed ranges, we change attribute on nodes inside those ranges
                 // omitting nodes where `internalLinkId` attribute is disallowed.
                 const ranges = model.schema.getValidRanges(selection.getRanges(), MODEL_INTERNAL_LINK_ID_ATTRIBUTE);
@@ -192,7 +197,7 @@ export default class InternalLinkCommand extends Command {
                 const rangesKeyword = model.schema.getValidRanges(selection.getRanges(), MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE);
 
                 for (const range of rangesKeyword) {
-                    writer.setAttribute(MODEL_INTERNAL_LINK_ID_ATTRIBUTE, internalLinkId, range);
+                    writer.setAttribute(MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE, keywordId, range);
                 }
             }
         });
