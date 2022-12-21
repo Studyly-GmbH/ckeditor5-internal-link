@@ -63,11 +63,11 @@ export default class InternalLinkEditing extends Plugin {
             dispatcher.on( `element:internallink`, ( evt, data, conversionApi ) => {
                 let keywordId = null;
                 let internallinkId = null;
-                if (data.viewItem.getAttribute('internallinkid')) {
-                    internallinkId = data.viewItem.getAttribute('internallinkid');
+                if (data.viewItem.getAttribute(VIEW_INTERNAL_LINK_ID_ATTRIBUTE)) {
+                    internallinkId = data.viewItem.getAttribute(VIEW_INTERNAL_LINK_ID_ATTRIBUTE);
                 }
-                if (data.viewItem.getAttribute('keywordid')) {
-                    keywordId = data.viewItem.getAttribute('keywordid');
+                if (data.viewItem.getAttribute(VIEW_INTERNAL_KEYWORD_ID_ATTRIBUTE)) {
+                    keywordId = data.viewItem.getAttribute(VIEW_INTERNAL_KEYWORD_ID_ATTRIBUTE);
                 }
                 if ( !data.modelRange ) {
                     data = Object.assign( data, conversionApi.convertChildren( data.viewItem, data.modelCursor ) );

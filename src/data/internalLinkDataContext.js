@@ -36,9 +36,6 @@ export default class InternalLinkDataContext {
         const url = this.editor.config.get(CONFIG_AUTOCOMPLETE_URL);
         const autocompleteUrl = replacePlaceholderInUrl(url, URL_PLACEHOLDER_SEARCH_TERM, searchTerm);
 
-        //let autocompleteUrl = replacePlaceholderInUrl(url, URL_PLACEHOLDER_SEARCH_TERM, searchTerm);
-        //autocompleteUrl = replacePlaceholderInUrl(autocompleteUrl, URL_PLACEHOLDER_REGION_INFO_IDS, urlRegionIds.toString());
-
         if (isTestMode) {
             return this.getAutocompleteTestData(searchTerm);
         }

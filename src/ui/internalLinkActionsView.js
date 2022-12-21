@@ -229,17 +229,10 @@ export default class InternalLinkActionsView extends View {
         });
 
         button.bind('label').to(this, PROPERTY_TITLE, linkTitle => {
-/*            if (button.element != null) {
-                this.editor.model.document.fire('test', button.element);
-            }*/
             return linkTitle || t('This link is invalid');
         });
 
         button.bind('isEnabled').to(this, PROPERTY_INTERNAL_LINK_ID, internalLinkId => !!internalLinkId);
-
-        //button.template.tag = 'a';
-        //button.template.eventListeners = {};
-
         return button;
     }
 }

@@ -293,7 +293,6 @@ export default class InternalLinkUi extends Plugin {
         const editor = this.editor;
         const actionsView = new InternalLinkActionsView(editor);
         const linkCommand = editor.commands.get(COMMAND_LINK);
-        //const linkConfig = editor.config.get(COMMAND_LINK)
         const unlinkCommand = editor.commands.get(COMMAND_UNLINK);
 
         actionsView.ui = this;
@@ -412,7 +411,7 @@ export default class InternalLinkUi extends Plugin {
             //console.log(this.actionsView.previewButtonView)
             this.fireIds[1] = false;
             this.fireIds[2] = false;
-            this.editor.model.document.fire('test', this.actionsView.previewButtonView);
+            this.editor.model.document.fire('shortDescriptionLoaded', this.actionsView.previewButtonView);
         }
     }
 

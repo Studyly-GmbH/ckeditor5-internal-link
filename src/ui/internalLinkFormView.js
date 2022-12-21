@@ -200,7 +200,7 @@ export default class InternalLinkFormView extends View {
 
         const labeledInput = new LabeledInputView(this.locale, InputTextView);
         labeledInput.inputView.placeholder = t('Enter title');
-        labeledInput.bind('value').to(this, PROPERTY_KEYWORD); //TODO
+        labeledInput.bind('value').to(this, PROPERTY_KEYWORD);
 
         return labeledInput;
     }
@@ -228,7 +228,6 @@ export default class InternalLinkFormView extends View {
             this.set(PROPERTY_KEYWORD_ID, '');
             this.set(PROPERTY_INTERNAL_LINK_ID, '');
             this.set(PROPERTY_TITLE, '');
-            //this.set(PROPERTY_KEYWORD, '');
 
             this.set(PROPERTY_INTERNAL_LINK_ID, event.text.value[0]);
             PROPERTY_KEYWORD_ID = event.text.value[1]
@@ -276,14 +275,6 @@ export default class InternalLinkFormView extends View {
                             "value": [obj.searchWikiPage.id, obj.keywordId]
                         }
                     }
-                //                        obj => {
-                //                         return {
-                //                                     "label" : obj.keyword + ' - ' +  wikiTitlesToString(obj.wikiTitles),
-                //                                     "value": [obj.wikiPageId, obj.id]
-                //                                 }
-                //                         }
-                //                         reduce()
-                //                     }
             );
 
                 this.autocomplete.list = response.data;
