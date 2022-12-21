@@ -131,14 +131,12 @@ export default class InternalLinkUi extends Plugin {
         // When there's no link under the selection, go straight to the editing UI.
         if (!this.getSelectedLinkElement()) {
             this.addActionsView(false);
-            console.log('1')
             this.addFormView();
         }
         // If theres a link under the selection...
         else {
             // Go to the editing UI if actions are already visible.
             if (this.areActionsVisible) {
-                console.log('2')
                 this.addFormView();
             }
             // Otherwise display just the actions UI.

@@ -287,9 +287,6 @@ export default class InternalLinkFormView extends View {
             );
 
                 this.autocomplete.list = response.data;
-
-                console.log(this.autocomplete)
-                console.log(this.dataContext)
             })
             .catch((e) => {
                 if (e.name === "AxiosError") {
