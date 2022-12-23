@@ -9,10 +9,12 @@ import { replacePlaceholderInUrl } from '../util/utils';
 import {
     CONFIG_TEST_MODE,
     CONFIG_AUTOCOMPLETE_URL,
-    CONFIG_TITLE_URL,
+    CONFIG_SHORT_DESCRIPTION_URL,
     CONFIG_AXIOS_INSTANCE,
-    URL_PLACEHOLDER_ID,
-    URL_PLACEHOLDER_SEARCH_TERM
+    URL_PLACEHOLDER_SHORT_DESCRIPTION_ID,
+    URL_PLACEHOLDER_SEARCH_TERM,
+    CONFIG_KEYWORD_URL,
+    URL_PLACEHOLDER_KEYWORD_ID
 } from '../util/constants';
 
 /**
@@ -44,16 +46,37 @@ export default class InternalLinkDataContext {
      * Loads the title of an item
      * @param {string} itemId The id of an item you want to load
      */
-    getTitleById(itemId) {
+    getShortDescriptionById(itemId) {
         const isTestMode = this.editor.config.get(CONFIG_TEST_MODE);
-        const url = this.editor.config.get(CONFIG_TITLE_URL);
-        const titleUrl = replacePlaceholderInUrl(url, URL_PLACEHOLDER_ID, itemId);
+        const url = this.editor.config.get(CONFIG_SHORT_DESCRIPTION_URL);
+        const shortDescriptionUrl = replacePlaceholderInUrl(url, URL_PLACEHOLDER_SHORT_DESCRIPTION_ID, itemId);
 
         if (isTestMode) {
             return this.getTitleTestData(itemId);
         }
 
-        return this.getAxiosInstance().get(titleUrl,  { withCredentials: true });
+        return this.getAxiosInstance().get(shortDescriptionUrl,  { withCredentials: true });
+    }
+
+    /**
+     * Loads the title of an item
+     * @param {string} itemId The id of an item you want to load
+     */
+    getKeywordById(itemId) {
+
+        if (itemId == undefined) {
+            console.warn('itemId is undefind')
+        }
+
+        const isTestMode = this.editor.config.get(CONFIG_TEST_MODE);
+        const url = this.editor.config.get(CONFIG_KEYWORD_URL);
+        const keyWordUrl = replacePlaceholderInUrl(url, URL_PLACEHOLDER_KEYWORD_ID, itemId);
+
+        if (isTestMode) {
+            return this.getTitleTestData(itemId);
+        }
+
+        return this.getAxiosInstance().get(keyWordUrl,  { withCredentials: true });
     }
 
     /**

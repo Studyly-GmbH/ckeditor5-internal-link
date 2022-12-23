@@ -24,7 +24,8 @@ import InternalLinkDataContext from '../data/internalLinkDataContext';
 
 import {
     PROPERTY_INTERNAL_LINK_ID,
-    PROPERTY_TITLE
+    PROPERTY_TITLE,
+    PROPERTY_KEYWORD_ID, PROPERTY_KEYWORD
 } from '../util/constants';
 
 import '../../theme/internallinkform.css';
@@ -53,6 +54,14 @@ export default class InternalLinkFormView extends View {
          * @member {String}
          */
         this.set(PROPERTY_INTERNAL_LINK_ID);
+
+        /**
+         * Value of the "title" attribute of the link to use in the {@link #previewButtonView}.
+         *
+         * @observable
+         * @member {String}
+         */
+        this.set(PROPERTY_KEYWORD);
 
         /**
          * Value of the "title" attribute of the link to use in the {@link #previewButtonView}.
@@ -155,7 +164,6 @@ export default class InternalLinkFormView extends View {
      */
     render() {
         super.render();
-
         this.initAutocomplete();
 
         submitHandler({
@@ -192,7 +200,7 @@ export default class InternalLinkFormView extends View {
 
         const labeledInput = new LabeledInputView(this.locale, InputTextView);
         labeledInput.inputView.placeholder = t('Enter title');
-        labeledInput.bind('value').to(this, PROPERTY_TITLE);
+        labeledInput.bind('value').to(this, PROPERTY_KEYWORD);
 
         return labeledInput;
     }
@@ -204,11 +212,11 @@ export default class InternalLinkFormView extends View {
 
         this.autocomplete = new Awesomplete(this.titleInputView.inputView.element, {
             list: [],
-            filter() {
+            filter(e) {
                 // Dont filter client side. The web service returns the data that should be shown only.
                 return true;
             },
-            replace() {
+            replace(e) {
                 // Dont replace the value. We are using our binding. See awesomplete-selectcomplete event.
             }
         });
@@ -217,11 +225,13 @@ export default class InternalLinkFormView extends View {
 
         this.titleInputView.inputView.element.addEventListener('awesomplete-selectcomplete', function(event) {
             // Reset the value to ensure that the observables are triggered even if the same value is selected.
+            this.set(PROPERTY_KEYWORD_ID, '');
             this.set(PROPERTY_INTERNAL_LINK_ID, '');
             this.set(PROPERTY_TITLE, '');
 
-            this.set(PROPERTY_INTERNAL_LINK_ID, event.text.value);
-            this.set(PROPERTY_TITLE, event.text.label);
+            this.set(PROPERTY_INTERNAL_LINK_ID, event.text.value[0]);
+            PROPERTY_KEYWORD_ID = event.text.value[1]
+            this.set(PROPERTY_KEYWORD, event.text.label);
         }.bind(this));
 
     }
@@ -248,6 +258,12 @@ export default class InternalLinkFormView extends View {
         }.bind(this);
     }
 
+    callLoadAutocompleteData() {
+        let timeout = null;
+        clearTimeout(timeout);
+        timeout = setTimeout(this.loadAutocompleteData(), 500);
+    }
+
     loadAutocompleteData() {
         this.set(PROPERTY_INTERNAL_LINK_ID, '');
         this.dataContext.getAutocompleteItems(this.titleInputView.inputView.element.value)
@@ -255,16 +271,20 @@ export default class InternalLinkFormView extends View {
                 response.data = response.data.map(
                     obj => {
                         return {
-                            "label" : obj.keyword,
-                            //"value": obj.id,
-                            "value": obj.wikiPageId
+                            "label" : obj.keyword /*+ ' - ' + this.wikiTitlesToString(obj.searchWikiPage.titles)*/,
+                            "value": [obj.searchWikiPage.id, obj.keywordId]
                         }
                     }
-                );
+            );
+
                 this.autocomplete.list = response.data;
             })
             .catch((e) => {
-                console.log(e);
+                if (e.name === "AxiosError") {
+                    console.log('axiosError', e.code, e.message)
+                } else {
+                    console.log(e);
+                }
                 this.autocomplete.list = [];
             });
     }
@@ -276,6 +296,10 @@ export default class InternalLinkFormView extends View {
         if (this.autocomplete) {
             this.autocomplete.destroy();
         }
+    }
+
+    wikiTitlesToString(list) {
+        return list.join(', ')
     }
 
 }

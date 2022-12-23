@@ -11,15 +11,13 @@ import FocusTracker from '@ckeditor/ckeditor5-utils/src/focustracker';
 import KeystrokeHandler from '@ckeditor/ckeditor5-utils/src/keystrokehandler';
 
 import { createButton, createFocusCycler, registerFocusableViews } from './uiUtils';
-import { replacePlaceholderInUrl } from '../util/utils';
 
 import unlinkIcon from '../../theme/icons/unlink.svg';
 import pencilIcon from '@ckeditor/ckeditor5-core/theme/icons/pencil.svg';
 
-import { PROPERTY_INTERNAL_LINK_ID,
-    PROPERTY_TITLE,
-    CONFIG_PREVIEW_URL,
-    URL_PLACEHOLDER_ID
+import {
+    PROPERTY_INTERNAL_LINK_ID,
+    PROPERTY_TITLE
 } from '../util/constants';
 
 import '../../theme/internallinkactions.css';
@@ -40,6 +38,8 @@ export default class InternalLinkActionsView extends View {
 
         const t = this.locale.t;
         this.editor = editor;
+
+        this.ui = null;
 
         /**
          * Value of the "internalLinkId" attribute of the link to use in the {@link #previewButtonView}.
@@ -94,9 +94,17 @@ export default class InternalLinkActionsView extends View {
         /**
          * The internalLink preview view.
          *
-         * @member {module:ui/view~View}
+         * @member {module:ui/view~ButtonView}
+         */
+        this.keywordButtonView = this.createKeywordButton();
+
+        /**
+         * The internalLink preview view.
+         *
+         * @member {module:ui/view~ButtonView}
          */
         this.previewButtonView = this.createPreviewButton();
+        this.previewButtonView.delegate('execute').to(this, 'openModal');
 
         /**
          * The unlink button view.
@@ -128,6 +136,7 @@ export default class InternalLinkActionsView extends View {
             },
 
             children: [
+                this.keywordButtonView,
                 this.previewButtonView,
                 this.editButtonView,
                 this.unlinkButtonView
@@ -142,6 +151,7 @@ export default class InternalLinkActionsView extends View {
         super.render();
 
         const childViews = [
+            this.keywordButtonView,
             this.previewButtonView,
             this.editButtonView,
             this.unlinkButtonView
@@ -151,6 +161,9 @@ export default class InternalLinkActionsView extends View {
         // They ensure that focus is working correctly and that we can handle button clicks
         registerFocusableViews(childViews, this.focusables, this.focusTracker);
         this.keystrokes.listenTo(this.element);
+        if (this.ui) {
+            this.ui.fireEvent(0) // only needs to be fired once
+        }
     }
 
     /**
@@ -166,14 +179,13 @@ export default class InternalLinkActionsView extends View {
      * @private
      * @returns {module:ui/button/buttonview~ButtonView} The button view instance.
      */
-    createPreviewButton() {
-        const button = new ButtonView(this.locale);
-        const bind = this.bindTemplate;
-        const t = this.t;
+    createKeywordButton() {
+        let button = new ButtonView(this.locale);
+        let t = this.t;
 
         button.set({
             withText: true,
-            tooltip: t('Open link in new tab')
+            tooltip: t('keyword')
         });
 
         button.extendTemplate({
@@ -182,7 +194,36 @@ export default class InternalLinkActionsView extends View {
                     'ck',
                     'ck-link-actions__preview'
                 ],
-                href: bind.to(PROPERTY_INTERNAL_LINK_ID, internalLinkId => { return this.createPreviewUrl(internalLinkId); }),
+                target: '_blank'
+            }
+        });
+
+        button.bind('isEnabled').to(this, PROPERTY_INTERNAL_LINK_ID, internalLinkId => !!internalLinkId);
+
+        return button;
+    }
+
+    /**
+     * Creates a link preview button.
+     *
+     * @private
+     * @returns {module:ui/button/buttonview~ButtonView} The button view instance.
+     */
+    createPreviewButton() {
+        const button = new ButtonView(this.locale);
+        const t = this.t;
+
+        button.set({
+            withText: true,
+            tooltip: t('show preview of wiki')
+        });
+
+        button.extendTemplate({
+            attributes: {
+                class: [
+                    'ck',
+                    'ck-link-actions__preview'
+                ],
                 target: '_blank'
             }
         });
@@ -192,18 +233,8 @@ export default class InternalLinkActionsView extends View {
         });
 
         button.bind('isEnabled').to(this, PROPERTY_INTERNAL_LINK_ID, internalLinkId => !!internalLinkId);
-
-        button.template.tag = 'a';
-        button.template.eventListeners = {};
-
         return button;
     }
-
-    createPreviewUrl(internalLinkId) {
-        const previewUrl = this.editor.config.get(CONFIG_PREVIEW_URL);
-        return replacePlaceholderInUrl(previewUrl, URL_PLACEHOLDER_ID, internalLinkId);
-    }
-
 }
 
 /**

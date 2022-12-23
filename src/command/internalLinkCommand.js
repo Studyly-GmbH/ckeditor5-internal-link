@@ -7,12 +7,17 @@ import findLinkRange from '../util/findlinkrange';
 import toMap from '@ckeditor/ckeditor5-utils/src/tomap';
 import InternalLinkDataContext from '../data/internalLinkDataContext';
 
-import { MODEL_INTERNAL_LINK_ID_ATTRIBUTE, PROPERTY_TITLE } from '../util/constants';
+import {
+    MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE,
+    MODEL_INTERNAL_LINK_ID_ATTRIBUTE,
+    PROPERTY_INTERNAL_LINK_ID,
+    PROPERTY_TITLE
+} from '../util/constants';
 
 /**
- * The internal link command. It is used by the {@link module:internalLink/internalLink~internalLink internal link feature}.
+ * The internal link command. It is used by the {@link module?:internalLink?/internalLink~internalLink internal link feature}.
  *
- * @extends module:core/command~Command
+ * @extends module?:core/command~Command
  */
 export default class InternalLinkCommand extends Command {
 
@@ -37,21 +42,31 @@ export default class InternalLinkCommand extends Command {
      */
     constructor(editor) {
         super(editor);
-
         // Make the title observable
+        //this.set(PROPERTY_KEYWORD, undefined);
         this.set(PROPERTY_TITLE, undefined);
+        this.set(PROPERTY_INTERNAL_LINK_ID, undefined);
+        this.keywordButtonView = undefined;
+
+        this.keyword = undefined;
+
+        this.keywordId = undefined;
+
+        this.ui = undefined;
     }
 
     /**
      * @inheritDoc
      */
     refresh() {
+
         const model = this.editor.model;
         const doc = model.document;
         const t = this.editor.locale && this.editor.locale.t;
 
         // Checks whether the attribute is allowed in selection (returns true if the attribute is not existing)
-        this.isEnabled = model.schema.checkAttributeInSelection(doc.selection, MODEL_INTERNAL_LINK_ID_ATTRIBUTE);
+        this.isEnabled = model.schema.checkAttributeInSelection(doc.selection, MODEL_INTERNAL_LINK_ID_ATTRIBUTE)
+            // && model.schema.checkAttributeInSelection(doc.selection, MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE);
 
         const newValue = doc.selection.getAttribute(MODEL_INTERNAL_LINK_ID_ATTRIBUTE);
 
@@ -59,17 +74,53 @@ export default class InternalLinkCommand extends Command {
             this.value = newValue;
 
             if (this.value) {
-                new InternalLinkDataContext(this.editor).getTitleById(this.value)
+                new InternalLinkDataContext(this.editor).getShortDescriptionById(this.value)
                     .then(response => {
                         this.title = response.data[0].shortDescription; //TODO: change this later
                     })
-                    .catch(() => {
+                    .catch((e) => {
+                        if (e.name === "AxiosError") {
+                            console.log('axiosError', e.code, e.message)
+                        } else {
+                            console.log(e);
+                        }
                         this.title = t('Error requesting title');
+                    }).then(_ => {
+                        this.ui.fireEvent(1); //fires everytime when the new short description is loaded
                     });
             } else {
                 this.title = '';
             }
         }
+
+        const newKeywordId = doc.selection.getAttribute(MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE);
+        if (this.keywordId !== newKeywordId) {
+            this.keywordId = newKeywordId;
+
+            if (this.keywordId) {
+                new InternalLinkDataContext(this.editor).getKeywordById(this.keywordId)
+                    .then(response => {
+                        this.keyword = response.data.keyword;
+                        if (this.keywordButtonView !== undefined) {
+                            this.keywordButtonView.label = response.data.keyword;
+                        }
+                    }).catch((e) => {
+                    if (e.name === "AxiosError") {
+                        console.log('axiosError', e.code, e.message)
+                    } else {
+                        console.log(e);
+                    }
+                    this.keyword = t('Error requesting keyword');
+                });
+            } else {
+                this.keyword = '';
+                this.keywordId = undefined;
+                if (this.keywordButtonView !== undefined) {
+                    this.keywordButtonView.label = '';
+                }
+            }
+        }
+
     }
 
     /**
@@ -79,17 +130,18 @@ export default class InternalLinkCommand extends Command {
      * those nodes where the `internalLinkId` attribute is allowed (disallowed nodes will be omitted).
      *
      * When the selection is collapsed and is not inside the text with the `internalLinkId` attribute, the
-     * new {@link module:engine/model/text~Text Text node} with the `internalLinkId` attribute will be inserted in place of caret, but
+     * new {@link module?:engine/model/text~Text Text node} with the `internalLinkId` attribute will be inserted in place of caret, but
      * only if such element is allowed in this place. The `_data` of the inserted text will equal the `internalLinkId` parameter.
      * The selection will be updated to wrap the just inserted text node.
      *
      * When the selection is collapsed and inside the text with the `internalLinkId` attribute, the attribute value will be updated.
      *
-     * @fires execute
      * @param {String} internalLinkId Link destination.
      * @param {String} internalLinkText Link text that is rendered if there is no selection otherwise the selected text will be rendered.
+     * @param {String} keywordId Id of keyword
      */
-    execute(internalLinkId, internalLinkText) {
+    execute(internalLinkId, internalLinkText, keywordId) {
+
         const model = this.editor.model;
         const selection = model.document.selection;
 
@@ -107,7 +159,7 @@ export default class InternalLinkCommand extends Command {
                         model);
 
                     writer.setAttribute(MODEL_INTERNAL_LINK_ID_ATTRIBUTE, internalLinkId, linkRange);
-
+                    writer.setAttribute(MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE, keywordId, linkRange);
                     // Create new range wrapping changed link.
                     writer.setSelection(linkRange);
                 }
@@ -118,6 +170,7 @@ export default class InternalLinkCommand extends Command {
                     const attributes = toMap(selection.getAttributes());
 
                     attributes.set(MODEL_INTERNAL_LINK_ID_ATTRIBUTE, internalLinkId);
+                    attributes.set(MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE, keywordId)
 
                     const node = writer.createText(internalLinkText, attributes);
 
@@ -133,6 +186,12 @@ export default class InternalLinkCommand extends Command {
 
                 for (const range of ranges) {
                     writer.setAttribute(MODEL_INTERNAL_LINK_ID_ATTRIBUTE, internalLinkId, range);
+                }
+
+                const rangesKeyword = model.schema.getValidRanges(selection.getRanges(), MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE);
+
+                for (const range of rangesKeyword) {
+                    writer.setAttribute(MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE, keywordId, range);
                 }
             }
         });

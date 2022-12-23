@@ -22,7 +22,10 @@ import {
     PROPERTY_VALUE,
     COMMAND_LINK,
     COMMAND_UNLINK,
-    BUTTON_LINK } from '../util/constants';
+    BUTTON_LINK, PROPERTY_KEYWORD, PROPERTY_KEYWORD_ID
+} from '../util/constants';
+
+const keystroke = 'Ctrl+5';
 
 export default class InternalLinkUi extends Plugin {
 
@@ -33,12 +36,19 @@ export default class InternalLinkUi extends Plugin {
         return [ContextualBalloon];
     }
 
+    fireIds = {
+        0: false,
+        1: false,
+        2: false
+    }
+
     /**
      * @inheritDoc
      */
     init() {
         const editor = this.editor;
-
+        const linkCommand = editor.commands.get(COMMAND_LINK);
+        linkCommand.ui = this;
         // Note that this observer is not available by default.
         // See: https://docs.ckeditor.com/ckeditor5/latest/api/module_engine_view_observer_clickobserver-ClickObserver.html
         editor.editing.view.addObserver(ClickObserver);
@@ -82,6 +92,14 @@ export default class InternalLinkUi extends Plugin {
         const linkCommand = editor.commands.get(COMMAND_LINK);
         const t = editor.t;
 
+        editor.keystrokes.set( keystroke, ( keyEvtData, cancel ) => {
+            // Prevent focusing the search bar in FF and opening new tab in Edge. #153, #154.
+            cancel();
+            if ( linkCommand.isEnabled ) {
+                this.showUi();
+            }
+        } );
+
         editor.ui.componentFactory.add(BUTTON_LINK, locale => {
             const button = createButton(t('Internal link'), LinkIcon, locale);
             button.isEnabled = true;
@@ -112,7 +130,7 @@ export default class InternalLinkUi extends Plugin {
 
         // When there's no link under the selection, go straight to the editing UI.
         if (!this.getSelectedLinkElement()) {
-            this.addActionsView();
+            this.addActionsView(false);
             this.addFormView();
         }
         // If theres a link under the selection...
@@ -123,7 +141,7 @@ export default class InternalLinkUi extends Plugin {
             }
             // Otherwise display just the actions UI.
             else {
-                this.addActionsView();
+                this.addActionsView(true);
             }
         }
 
@@ -219,10 +237,10 @@ export default class InternalLinkUi extends Plugin {
     }
 
     /**
-     * Creates the {@link module:internalLink/ui/internalInternalLinkFormView~InternalInternalLinkFormView} instance.
+     * Creates the {@link InternalLinkFormView} instance.
      *
      * @private
-     * @returns {module:internalLink/ui/internalInternalLinkFormView~InternalInternalLinkFormView} The link form instance.
+     * @returns {InternalLinkFormView} The link form instance.
      */
     createFormView() {
         const editor = this.editor;
@@ -230,7 +248,11 @@ export default class InternalLinkUi extends Plugin {
         const linkCommand = editor.commands.get(COMMAND_LINK);
 
         formView.bind(PROPERTY_INTERNAL_LINK_ID).to(linkCommand, PROPERTY_VALUE);
+
         formView.bind(PROPERTY_TITLE).to(linkCommand, PROPERTY_TITLE);
+        formView.bind(PROPERTY_KEYWORD).to(linkCommand, PROPERTY_KEYWORD);
+
+
 
         // Form elements should be read-only when corresponding commands are disabled.
         formView.titleInputView.bind('isReadOnly').to(linkCommand, 'isEnabled', value => !value);
@@ -240,7 +262,8 @@ export default class InternalLinkUi extends Plugin {
             editor.execute(
                 COMMAND_LINK,
                 formView.internallinkid,
-                formView.title);
+                formView.keyword,
+                PROPERTY_KEYWORD_ID);
 
             this.removeFormView();
         });
@@ -272,9 +295,11 @@ export default class InternalLinkUi extends Plugin {
         const linkCommand = editor.commands.get(COMMAND_LINK);
         const unlinkCommand = editor.commands.get(COMMAND_UNLINK);
 
+        actionsView.ui = this;
+        linkCommand.keywordButtonView = actionsView.keywordButtonView;
+
         actionsView.bind(PROPERTY_INTERNAL_LINK_ID).to(linkCommand, PROPERTY_VALUE);
         actionsView.bind(PROPERTY_TITLE).to(linkCommand, PROPERTY_TITLE);
-
         actionsView.editButtonView.bind('isEnabled').to(linkCommand, 'isEnabled');
         actionsView.unlinkButtonView.bind('isEnabled').to(unlinkCommand, 'isEnabled');
 
@@ -287,6 +312,11 @@ export default class InternalLinkUi extends Plugin {
         this.listenTo(actionsView, 'unlink', () => {
             editor.execute(COMMAND_UNLINK);
             this.hideUI();
+        });
+
+        //Execute open modal command after clicking on the "Preview" button.
+        this.listenTo(actionsView, 'openModal', () =>  {
+            editor.model.document.fire('openWikiModal', linkCommand.value);
         });
 
         // Close the panel on esc key press when the **actions have focus**.
@@ -360,16 +390,29 @@ export default class InternalLinkUi extends Plugin {
      *
      * @protected
      */
-    addActionsView() {
+    addActionsView(fire) {
         // Do nothing if the actions are visible already.
         if (this.isBalloonInitializedWithActions) {
             return;
         }
-
+        if (this.actionsView.previewButtonView && fire) {
+            this.fireEvent(2); //fires everytime when the actionview is opened
+        }
         this.balloon.add({
             view: this.actionsView,
             position: this.getBalloonPositionData()
         });
+    }
+
+
+    fireEvent(id) {
+        this.fireIds[id] = true
+        if (this.fireIds[0] && this.fireIds[1] && this.fireIds[2]) {
+            //console.log(this.actionsView.previewButtonView)
+            this.fireIds[1] = false;
+            this.fireIds[2] = false;
+            this.editor.model.document.fire('shortDescriptionLoaded', this.actionsView.previewButtonView);
+        }
     }
 
     /**
@@ -381,7 +424,6 @@ export default class InternalLinkUi extends Plugin {
         if (this.isBalloonInitializedWithForm) {
             return;
         }
-
         const editor = this.editor;
         const linkCommand = editor.commands.get(COMMAND_LINK);
 
@@ -398,8 +440,11 @@ export default class InternalLinkUi extends Plugin {
         // clicked the same link), they would see the old value instead of the actual value of the command.
         // https://github.com/ckeditor/ckeditor5-link/issues/78
         // https://github.com/ckeditor/ckeditor5-link/issues/123
+        PROPERTY_KEYWORD_ID = linkCommand.keywordId || '';
+        this.formView.keyword = linkCommand.keyword || '';
         this.formView.title = linkCommand.title || '';
         this.formView.internallinkid = linkCommand.value || '';
+        this.formView.callLoadAutocompleteData();
     }
 
     /**
