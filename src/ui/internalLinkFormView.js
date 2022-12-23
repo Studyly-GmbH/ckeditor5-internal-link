@@ -216,6 +216,9 @@ export default class InternalLinkFormView extends View {
                 // Dont filter client side. The web service returns the data that should be shown only.
                 return true;
             },
+            sort(a, b) {
+                return a < b? -1 : 1;
+            },
             replace(e) {
                 // Dont replace the value. We are using our binding. See awesomplete-selectcomplete event.
             }
@@ -271,12 +274,15 @@ export default class InternalLinkFormView extends View {
                 response.data = response.data.map(
                     obj => {
                         return {
-                            "label" : obj.keyword /*+ ' - ' + this.wikiTitlesToString(obj.searchWikiPage.titles)*/,
+                            "label" : obj.keyword + ' \\- ' + obj.searchWikiPage.id + ' \\- '/*+ ' - ' + this.wikiTitlesToString(obj.searchWikiPage.titles)*/,
                             "value": [obj.searchWikiPage.id, obj.keywordId]
                         }
                     }
             );
-
+                console.log(this.autocomplete.ul)
+                for (let i = 0; i < this.autocomplete.ul.children.length; i++) {
+                    console.log(this.autocomplete.ul.children[i].textContent)
+                }
                 this.autocomplete.list = response.data;
             })
             .catch((e) => {
