@@ -58,6 +58,7 @@
         text-shadow: none;
         max-height: 14rem;
         overflow: auto;
+        width: max-content;
     }
 
         & .awesomplete > ul > li {
@@ -76,11 +77,15 @@
             color: white;
         }
 
-            & .awesomplete mark {
-				vertical-align: baseline;
-                background: hsl(65, 100%, 50%);
-            }
+        & .awesomplete mark {
+            vertical-align: baseline;
+            background: hsl(65, 100%, 50%);
+        }
 
+        & .awesomplete span.wiki-title {
+            float: right;
+            color: #868e96;
+        }
 
         & .ul {
             max-height: 40px;

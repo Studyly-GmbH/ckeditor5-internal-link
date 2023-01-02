@@ -19,7 +19,7 @@ import cancelIcon from '@ckeditor/ckeditor5-core/theme/icons/cancel.svg';
 
 import { createButton, createFocusCycler, registerFocusableViews } from './uiUtils';
 
-import Awesomplete from 'awesomplete';
+import Awesomplete from '../../../awesomplete';
 import InternalLinkDataContext from '../data/internalLinkDataContext';
 
 import {
@@ -274,15 +274,12 @@ export default class InternalLinkFormView extends View {
                 response.data = response.data.map(
                     obj => {
                         return {
-                            "label" : obj.keyword + ' \\- ' + obj.searchWikiPage.id + ' \\- '/*+ ' - ' + this.wikiTitlesToString(obj.searchWikiPage.titles)*/,
-                            "value": [obj.searchWikiPage.id, obj.keywordId]
+                            "label" : obj.keyword /*+ ' - ' + this.wikiTitlesToString(obj.searchWikiPage.titles)*/,
+                            "value" : [obj.searchWikiPage.id, obj.keywordId],
+                            "title" : obj.searchWikiPage.titles.join(", ")
                         }
                     }
             );
-                console.log(this.autocomplete.ul)
-                for (let i = 0; i < this.autocomplete.ul.children.length; i++) {
-                    console.log(this.autocomplete.ul.children[i].textContent)
-                }
                 this.autocomplete.list = response.data;
             })
             .catch((e) => {
