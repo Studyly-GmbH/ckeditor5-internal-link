@@ -85,6 +85,7 @@
         & .awesomplete span.wiki-title {
             float: right;
             color: #868e96;
+            padding-left: 1rem;
         }
 
         & .ul {
