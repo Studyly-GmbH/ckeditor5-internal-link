@@ -88,6 +88,13 @@
             padding-left: 1rem;
         }
 
+        & .awesomplete a.wiki-preview-popup {
+              float: right;
+              color: dodgerblue;
+              padding-left: 0.3rem;
+              padding-right: 0.1rem;
+        }
+
         & .ul {
             max-height: 40px;
             overflow: auto;
