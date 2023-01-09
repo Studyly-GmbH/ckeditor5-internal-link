@@ -507,7 +507,7 @@ export default class InternalLinkUi extends Plugin {
         clickOutsideHandler({
             emitter: this.formView,
             activator: () => this.isUIVisible,
-            contextElements: [this.balloon.view.element],
+            contextElements: [this.balloon.view.element ], //TODO: opening wikiModal element be added to this
             callback: () => this.hideUI()
         });
     }
