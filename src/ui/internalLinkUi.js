@@ -106,7 +106,7 @@ export default class InternalLinkUi extends Plugin {
 
             // Disables the button if the link command is not enabled
             button.bind('isEnabled').to(linkCommand, 'isEnabled');
-
+            button.keystroke = keystroke;
             // Show the panel on button click.
             this.listenTo(button, 'execute', () => this.showUi());
 

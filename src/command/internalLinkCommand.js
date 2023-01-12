@@ -53,44 +53,6 @@ export default class InternalLinkCommand extends Command {
         this.keywordId = undefined;
 
         this.ui = undefined;
-
-        const model = this.editor.model;
-        const document = model.document;
-
-        document.registerPostFixer( writer => {
-
-            const changes = Array.from( editor.model.document.differ.getChanges());
-            const entry = changes[0]
-            if ( changes.length !== 1 || entry.type !== 'insert' || entry.name !== '$text' || entry.length != 1 ) {
-                return;
-            }
-            if (!entry.attributes.has('keywordId')) {
-                return;
-            }
-
-            if (entry.position.textNode == undefined || !entry.position.textNode.data) {
-                return;
-            }
-            let textNode = entry.position.textNode;
-            if (textNode.data.endsWith(" ")) {
-                let keywordId = textNode.getAttribute('keywordId')
-                let internalLinkId = textNode.getAttribute('internalLinkId')
-
-                let endPos = entry.position
-                let startPos = model.createPositionFromPath(entry.position.root, textNode.getPath())
-
-                let endPath = endPos.path
-
-                let endPositionWithoutSpace2 = model.createPositionFromPath(entry.position.root, endPath)
-                let range = model.createRange(startPos, endPositionWithoutSpace2)
-
-                writer.removeAttribute('keywordId', entry.position.textNode)
-                writer.removeAttribute('internalLinkId', entry.position.textNode)
-                writer.setAttribute('keywordId', keywordId, range)
-                writer.setAttribute('internalLinkId', internalLinkId, range)
-            }
-
-        })
     }
 
     /**
@@ -107,7 +69,6 @@ export default class InternalLinkCommand extends Command {
             // && model.schema.checkAttributeInSelection(doc.selection, MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE);
 
         const newValue = doc.selection.getAttribute(MODEL_INTERNAL_LINK_ID_ATTRIBUTE);
-        console.log('refresch')
         if (this.value !== newValue) {
             this.value = newValue;
 
