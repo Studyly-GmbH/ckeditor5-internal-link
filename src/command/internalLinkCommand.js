@@ -56,153 +56,39 @@ export default class InternalLinkCommand extends Command {
 
         const model = this.editor.model;
         const document = model.document;
-        const selection = model.document.selection;
-        let attributeKeys = ['keywordId', 'internalLinkId']
-
-/*
-        editor.model.document.on( 'change:data', ( evt, batch ) => {
-            console.log('change:data')
-/!*            let a = model.schema.checkAttributeInSelection(doc.selection, MODEL_INTERNAL_LINK_ID_ATTRIBUTE)
-            console.log(a)*!/
-            const changes = Array.from( editor.model.document.differ.getChanges() );
-            const entry = changes[ 0 ];
-
-            // Typing is represented by only a single change.
-            if ( changes.length != 1 || entry.type !== 'insert' || entry.name != '$text' || entry.length != 1 ) {
-                console.log('not one type change')
-                return;
-            }
-            if (!entry.attributes.has('keywordId')) {
-                console.log('no keywordId')
-                return;
-            }
-            entry.position.stickiness = "toNext";
-            if (entry.attributes.has('keywordId')) {
-                console.log('hasAttribute')
-            }
-            console.log('batch', batch)
-            console.log('entry', entry)
-
-            let element = entry.position.nodeAfter;
-            console.log('element', element)
-            let attributeKeys = ['keywordId', 'internalLinkId']
-            batch.operations.forEach(x => {
-                x.shouldReceiveAttributes = false;
-                if (x.nodes != null) {
-                    for (let node of x.nodes) {
-                        x._attrs = []
-                    }
-                }
-            });
-            /!*for ( const { item } of entry.range.getWalker( { shallow: true } ) ) {
-                for ( const attributeKey of attributeKeys ) {
-                    if ( item.hasAttribute( attributeKey ) ) {
-                        writer.removeAttribute( attributeKey, item );
-                    }
-                }
-            }*!/
-        })
-*/
-
 
         document.registerPostFixer( writer => {
 
-            const changes = Array.from( editor.model.document.differ.getChanges() );
-            //console.log(changes)
+            const changes = Array.from( editor.model.document.differ.getChanges());
             const entry = changes[0]
-            console.log(entry)
             if ( changes.length !== 1 || entry.type !== 'insert' || entry.name !== '$text' || entry.length != 1 ) {
-                console.log('not one type change')
                 return;
             }
             if (!entry.attributes.has('keywordId')) {
-                console.log('no keywordId')
                 return;
             }
-            //console.log(entry.position.data)
-            let textNode = ""
-            if (entry.position.textNode != undefined && entry.position.textNode.data) {
-                textNode = entry.position.textNode
+
+            if (entry.position.textNode == undefined || !entry.position.textNode.data) {
+                return;
             }
-            textNode = entry.position.textNode;
-            console.log(textNode)
+            let textNode = entry.position.textNode;
             if (textNode.data.endsWith(" ")) {
                 let keywordId = textNode.getAttribute('keywordId')
                 let internalLinkId = textNode.getAttribute('internalLinkId')
-                /*writer.removeAttribute('keywordId', entry.position.textNode)
-                writer.removeAttribute('internalLinkId', entry.position.textNode)*/
 
                 let endPos = entry.position
                 let startPos = model.createPositionFromPath(entry.position.root, textNode.getPath())
-                console.log('startPos' , startPos)
-                console.log('entry.position', endPos)
 
-                let endPath2 = endPos.path
-                console.log(endPath2)
-                //endPath2[endPath2.length-1] = endPath2[endPath2.length-1] - 1
-                console.log(endPath2)
-                let endPositionWithoutSpace2 = model.createPositionFromPath(entry.position.root, endPath2)
-                let range2 = model.createRange(startPos, endPositionWithoutSpace2)
-                console.log(range2)
+                let endPath = endPos.path
+
+                let endPositionWithoutSpace2 = model.createPositionFromPath(entry.position.root, endPath)
+                let range = model.createRange(startPos, endPositionWithoutSpace2)
+
                 writer.removeAttribute('keywordId', entry.position.textNode)
                 writer.removeAttribute('internalLinkId', entry.position.textNode)
-                writer.setAttribute('keywordId', keywordId, range2)
-                writer.setAttribute('internalLinkId', internalLinkId, range2)
-
-               /* let endPath = textNode.getPath()
-                console.log(endPath)
-                endPath[endPath.length-1] = endPath[endPath.length-1] - 1
-                console.log(endPath)
-                let endPositionWithoutSpace = model.createPositionFromPath(entry.position.root, endPath)
-                let range = model.createRange(endPositionWithoutSpace2, entry.position)
-                console.log(range)
-                writer.removeAttribute('keywordId', entry.position.textNode)
-                writer.removeAttribute('internalLinkId', entry.position.textNode)
-                //console.log(range.)
                 writer.setAttribute('keywordId', keywordId, range)
                 writer.setAttribute('internalLinkId', internalLinkId, range)
-                //writer.setAttribute()*/
             }
-
-            //model.createRange( start.getShiftedBy( array[ 0 ] ), start.getShiftedBy( array[ 1 ] ) );
-/*            for (const change of document.differ.getChanges()) {
-                console.log(change)
-
-                const root = this.editor.model.document.getRoot();
-
-                for ( const child of root.getChildren() ) {
-                    for ( const child1 of child.getChildren() ) {
-                        for (const attributeKey of attributeKeys) {
-                            if (child1.hasAttribute(attributeKey)) {
-                                writer.removeAttribute(attributeKey, child1);
-                            }
-                        }
-                    }
-                }*/
-/*                if (change.type == 'insert' || change.type == 'attribute' && change.attributeKey == 'imageStyle') {
-                    let element = change.type == 'insert' ? change.position.nodeAfter : change.range.start.nodeAfter;
-
-                    if (element && element.is('element', 'paragraph') && element.childCount > 0) {
-                        element = element.getChild(0);
-                    }
-                    console.log(element);
-                    /!*if (!imageUtils.isImage(element)) {
-                        continue;
-                    }*!/
-
-                    const imageStyle = element.getAttribute('imageStyle');
-
-                    if (!imageStyle) {
-                        continue;
-                    }
-/!*
-                    const imageStyleDefinition = stylesMap.get(imageStyle);
-
-                    if (!imageStyleDefinition || !imageStyleDefinition.modelElements.includes(element.name)) {
-                        writer.removeAttribute('imageStyle', element);
-                        changed = true;
-                    }*!/
-                }*/
 
         })
     }
