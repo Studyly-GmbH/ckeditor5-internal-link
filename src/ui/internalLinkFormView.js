@@ -29,6 +29,7 @@ import {
 } from '../util/constants';
 
 import '../../theme/internallinkform.css';
+import {getTitlesString} from "../util/utils";
 
 /**
  * The internal link form view controller class.
@@ -276,7 +277,7 @@ export default class InternalLinkFormView extends View {
                         return {
                             "label" : obj.keyword /*+ ' - ' + this.wikiTitlesToString(obj.searchWikiPage.titles)*/,
                             "value" : [obj.searchWikiPage.id, obj.keywordId],
-                            "title" : obj.searchWikiPage.titles.join(", ")
+                            "title" : getTitlesString(obj.searchWikiPage.titles)
                         }
                     }
             );
