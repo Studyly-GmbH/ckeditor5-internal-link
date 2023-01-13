@@ -4,7 +4,6 @@
 
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import {createKeywordIdElement, createLinkElement} from './util/utils';
-import { TwoStepCaretMovement } from '@ckeditor/ckeditor5-typing';
 import inlineHighlight from '@ckeditor/ckeditor5-typing/src/utils/inlinehighlight';
 import '../theme/editing.css';
 import {
@@ -85,32 +84,54 @@ export default class InternalLinkEditing extends Plugin {
         )
 
         // Enable two-step caret movement for `internalLinkId` attribute.
-        editor.plugins.get(TwoStepCaretMovement).registerAttribute(MODEL_INTERNAL_LINK_ID_ATTRIBUTE);
-        editor.plugins.get(TwoStepCaretMovement).registerAttribute(MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE);
+        let twoStepCaretMovementWithoutSpace = this.editor.plugins.get('TwoStepCaretMovementWithoutSpace')
+
+        twoStepCaretMovementWithoutSpace.registerAttribute(MODEL_INTERNAL_LINK_ID_ATTRIBUTE);
+        twoStepCaretMovementWithoutSpace.registerAttribute(MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE);
 
         // Setup highlight over selected link.
         inlineHighlight(editor, MODEL_INTERNAL_LINK_ID_ATTRIBUTE, VIEW_INTERNAL_LINK_TAG, CLASS_HIGHLIGHT);
         inlineHighlight(editor, MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE, VIEW_INTERNAL_LINK_TAG, CLASS_HIGHLIGHT);
 
-        const model = this.editor.model;
+/*        const model = this.editor.model;
         const document = model.document;
-
+        let uid = null;
         document.registerPostFixer( writer => {
-
+            /!*if (uid != null ) {
+                this.editor.model.change( writer => {
+                    writer.restoreSelectionGravity( uid );
+                    uid = null;
+                } );
+            }*!/
             const changes = Array.from( editor.model.document.differ.getChanges());
             const entry = changes[0]
             if ( changes.length !== 1 || entry.type !== 'insert' || entry.name !== '$text' || entry.length != 1 ) {
+                console.log('1')
+                console.log(changes)
                 return;
             }
             if (!entry.attributes.has('keywordId')) {
+                console.log('2')
+                console.log(changes)
+                return;
+
+            }
+            if (entry.position.textNode == undefined || !entry.position.textNode.data) {
+                console.log('3')
+                console.log(changes)
                 return;
             }
 
-            if (entry.position.textNode == undefined || !entry.position.textNode.data) {
-                return;
-            }
             let textNode = entry.position.textNode;
             if (textNode.data.endsWith(" ")) {
+                const selection = editor.model.document.selection;
+                uid = this.editor.model.change( writer => {
+                    return writer.overrideSelectionGravity();
+                } );
+                //let id = writer.overrideSelectionGravity();
+                console.log('4')
+                console.log(changes)
+                console.log(textNode.data)
                 let keywordId = textNode.getAttribute('keywordId')
                 let internalLinkId = textNode.getAttribute('internalLinkId')
 
@@ -121,13 +142,15 @@ export default class InternalLinkEditing extends Plugin {
 
                 let endPositionWithoutSpace2 = model.createPositionFromPath(entry.position.root, endPath)
                 let range = model.createRange(startPos, endPositionWithoutSpace2)
-
+                console.log(range)
+                //writer.setSelectionFocus( entry.position.nodeAfter, 'after' )
                 writer.removeAttribute('keywordId', entry.position.textNode)
                 writer.removeAttribute('internalLinkId', entry.position.textNode)
+                //writer.setSelection(selection, { backward: true } )
                 writer.setAttribute('keywordId', keywordId, range)
                 writer.setAttribute('internalLinkId', internalLinkId, range)
+                //writer.restoreSelectionGravity( id )
             }
-
-        })
+        })*/
     }
 }

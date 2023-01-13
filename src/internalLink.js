@@ -9,6 +9,7 @@ import InternalLinkCommandRegistration from './command/internalLinkCommandRegist
 import InternalLinkEditing from './internalLinkEditing';
 import InternalLinkUi from './ui/internalLinkUi';
 import {TwoStepCaretMovement} from "@ckeditor/ckeditor5-typing";
+import TwoStepCaretMovementWithoutSpace from "./util/twostepcaretmovementwithoutspace";
 
 /**
  * The internal link plugin. It introduces the Link and Unlink buttons for internal links.
@@ -23,7 +24,7 @@ export default class InternalLink extends Plugin {
      * @inheritDoc
      */
     static get requires() {
-        return [InternalLinkConfig, InternalLinkCommandRegistration, InternalLinkEditing, InternalLinkUi, TwoStepCaretMovement];
+        return [InternalLinkConfig, TwoStepCaretMovementWithoutSpace, InternalLinkCommandRegistration, InternalLinkEditing, InternalLinkUi, TwoStepCaretMovement];
     }
 
     /**
