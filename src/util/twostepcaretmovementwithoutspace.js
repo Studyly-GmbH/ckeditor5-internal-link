@@ -170,7 +170,7 @@ export default class TwoStepCaretMovementWithoutSpace extends Plugin {
 			let isMovementHandled = false;
 
 			if ( ( contentDirection === 'ltr' && arrowRightPressed ) || ( contentDirection === 'rtl' && arrowLeftPressed ) ) {
-				isMovementHandled = this._handleForwardMovement( data );
+				isMovementHandled = this._handleForwardMovement( data, false );
 			} else {
 				isMovementHandled = this._handleBackwardMovement( data );
 			}
@@ -181,6 +181,41 @@ export default class TwoStepCaretMovementWithoutSpace extends Plugin {
 				evt.stop();
 			}
 		}, { context: '$text', priority: 'highest' } );
+
+        this.listenTo( view.document, 'keydown', ( evt, data ) => {
+            // This implementation works only for collapsed selection.
+            if ( !modelSelection.isCollapsed ) {
+                return;
+            }
+
+            // When user tries to expand the selection or jump over the whole word or to the beginning/end then
+            // two-steps movement is not necessary.
+            if ( data.shiftKey || data.altKey || data.ctrlKey ) {
+                return;
+            }
+
+            const space = data.keyCode == keyCodes.space;
+
+            // When neither left or right arrow has been pressed then do noting.
+            if ( !space ) {
+                return;
+            }
+
+            const contentDirection = locale.contentLanguageDirection;
+            let isMovementHandled = false;
+
+            if ( ( contentDirection === 'ltr' && space ) /*|| ( contentDirection === 'rtl' && arrowLeftPressed )*/ ) {
+                isMovementHandled = this._handleForwardMovement( data, true );
+            } else {
+               // isMovementHandled = this._handleBackwardMovement( data );
+            }
+
+            // Stop the keydown event if the two-step caret movement handled it. Avoid collisions
+            // with other features which may also take over the caret movement (e.g. Widget).
+            if ( isMovementHandled === true ) {
+                evt.stop();
+            }
+        }, { context: '$text', priority: 'highest' } );
 
 		/**
 		 * A flag indicating that the automatic gravity restoration should not happen upon the next
@@ -237,7 +272,7 @@ export default class TwoStepCaretMovementWithoutSpace extends Plugin {
 	 * @param {module:engine/view/observer/domeventdata~DomEventData} data Data of the key press.
 	 * @returns {Boolean} `true` when the handler prevented caret movement
 	 */
-	_handleForwardMovement( data ) {
+	_handleForwardMovement( data, space ) {
 		const attributes = this.attributes;
 		const model = this.editor.model;
 		const selection = model.document.selection;
@@ -274,8 +309,10 @@ export default class TwoStepCaretMovementWithoutSpace extends Plugin {
 		//		<paragraph>foo{}<$text attribute>bar</$text>baz</paragraph>
 		//
 		if ( isBetweenDifferentAttributes( position, attributes ) ) {
-			preventCaretMovement( data );
-			this._overrideGravity();
+            if (!space) {
+                preventCaretMovement(data);
+            }
+            this._overrideGravity();
 			return true;
 		}
 	}
