@@ -277,7 +277,7 @@ export default class InternalLinkFormView extends View {
                         return {
                             "label" : obj.keyword /*+ ' - ' + this.wikiTitlesToString(obj.searchWikiPage.titles)*/,
                             "value" : [obj.searchWikiPage.id, obj.keywordId],
-                            "title" : getTitlesString(obj.searchWikiPage.titles)
+                            "title" : obj.searchWikiPage.titles
                         }
                     }
             );
