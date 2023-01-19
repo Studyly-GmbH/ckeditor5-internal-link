@@ -43,14 +43,6 @@ export default class InternalUnlinkCommand extends Command {
             // Remove `internalLinkId` attribute from specified ranges.
             for (const range of rangesToUnlink) {
                 writer.removeAttribute(MODEL_INTERNAL_LINK_ID_ATTRIBUTE, range);
-            }
-
-            const rangesKeywordToUnlink = selection.isCollapsed
-                ? [findLinkRange(selection.getFirstPosition(), selection.getAttribute(MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE), model)]
-                : selection.getRanges();
-
-            // Remove `keywordId` attribute from specified ranges.
-            for (const range of rangesKeywordToUnlink) {
                 writer.removeAttribute(MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE, range);
             }
         });

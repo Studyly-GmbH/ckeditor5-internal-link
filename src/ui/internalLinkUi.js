@@ -6,7 +6,7 @@ import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import ClickObserver from '@ckeditor/ckeditor5-engine/src/view/observer/clickobserver';
 
 import ContextualBalloon from '@ckeditor/ckeditor5-ui/src/panel/balloon/contextualballoon';
-import clickOutsideHandler from '@ckeditor/ckeditor5-ui/src/bindings/clickoutsidehandler';
+import clickOutsideHandler from '../util/utils';
 
 import InternalLinkFormView from './internalLinkFormView';
 import InternalLinkActionsView from './internalLinkActionsView';
@@ -106,7 +106,7 @@ export default class InternalLinkUi extends Plugin {
 
             // Disables the button if the link command is not enabled
             button.bind('isEnabled').to(linkCommand, 'isEnabled');
-
+            button.keystroke = keystroke;
             // Show the panel on button click.
             this.listenTo(button, 'execute', () => this.showUi());
 
@@ -507,7 +507,7 @@ export default class InternalLinkUi extends Plugin {
         clickOutsideHandler({
             emitter: this.formView,
             activator: () => this.isUIVisible,
-            contextElements: [this.balloon.view.element],
+            contextElements: [ this.balloon.view.element ],
             callback: () => this.hideUI()
         });
     }

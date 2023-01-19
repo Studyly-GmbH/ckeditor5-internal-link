@@ -19,7 +19,7 @@ import cancelIcon from '@ckeditor/ckeditor5-core/theme/icons/cancel.svg';
 
 import { createButton, createFocusCycler, registerFocusableViews } from './uiUtils';
 
-import Awesomplete from 'awesomplete';
+import Awesomplete from '../../../awesomplete';
 import InternalLinkDataContext from '../data/internalLinkDataContext';
 
 import {
@@ -29,6 +29,7 @@ import {
 } from '../util/constants';
 
 import '../../theme/internallinkform.css';
+import {getTitlesString} from "../util/utils";
 
 /**
  * The internal link form view controller class.
@@ -216,6 +217,9 @@ export default class InternalLinkFormView extends View {
                 // Dont filter client side. The web service returns the data that should be shown only.
                 return true;
             },
+            sort(a, b) {
+                return a < b? -1 : 1;
+            },
             replace(e) {
                 // Dont replace the value. We are using our binding. See awesomplete-selectcomplete event.
             }
@@ -272,11 +276,11 @@ export default class InternalLinkFormView extends View {
                     obj => {
                         return {
                             "label" : obj.keyword /*+ ' - ' + this.wikiTitlesToString(obj.searchWikiPage.titles)*/,
-                            "value": [obj.searchWikiPage.id, obj.keywordId]
+                            "value" : [obj.searchWikiPage.id, obj.keywordId],
+                            "title" : obj.searchWikiPage.titles
                         }
                     }
             );
-
                 this.autocomplete.list = response.data;
             })
             .catch((e) => {

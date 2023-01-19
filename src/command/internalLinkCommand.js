@@ -69,7 +69,6 @@ export default class InternalLinkCommand extends Command {
             // && model.schema.checkAttributeInSelection(doc.selection, MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE);
 
         const newValue = doc.selection.getAttribute(MODEL_INTERNAL_LINK_ID_ATTRIBUTE);
-
         if (this.value !== newValue) {
             this.value = newValue;
 
