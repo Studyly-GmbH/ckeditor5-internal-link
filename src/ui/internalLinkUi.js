@@ -77,7 +77,7 @@ export default class InternalLinkUi extends Plugin {
 
         this.createToolbarButton();
 
-        // Attach lifecycle actions to the the balloon.
+        // Attach lifecycle actions to the balloon.
         this.enableUserBalloonInteractions();
     }
 
@@ -127,7 +127,7 @@ export default class InternalLinkUi extends Plugin {
         if (!linkCommand.isEnabled) {
             return;
         }
-
+      //  console.log('this.getSelectedLinkElement()132')
         // When there's no link under the selection, go straight to the editing UI.
         if (!this.getSelectedLinkElement()) {
             this.addActionsView(false);
@@ -156,7 +156,12 @@ export default class InternalLinkUi extends Plugin {
      *
      * @protected
      */
-    hideUI() {
+    hideUI(id) {
+        if (id != null) {
+            console.log('id', id)
+        } else {
+            console.log('id null')
+        }
         if (!this.isBalloonInitialized) {
             return;
         }
@@ -185,13 +190,17 @@ export default class InternalLinkUi extends Plugin {
      */
     startUpdatingUI() {
         const editor = this.editor;
-
+      //  console.log('this.getSelectedLinkElement()193')
         let prevSelectedLink = this.getSelectedLinkElement();
         let prevSelectionParent = this.getSelectionParent();
 
         this.listenTo(editor.ui, 'update', () => {
+          //  console.log('this.getSelectedLinkElement()198')
             const selectedLink = this.getSelectedLinkElement();
             const selectionParent = this.getSelectionParent();
+
+            console.log(selectedLink)
+            console.log(selectionParent)
 
             // Hide the panel if:
             //
@@ -205,7 +214,7 @@ export default class InternalLinkUi extends Plugin {
             // when fully selected.
             if ((prevSelectedLink && !selectedLink)
                 || (!prevSelectedLink && selectionParent !== prevSelectionParent)) {
-                this.hideUI();
+                //this.hideUI(1);
             }
             // Update the position of the panel when:
             //  * the selection remains in the original link element,
@@ -214,12 +223,46 @@ export default class InternalLinkUi extends Plugin {
                 // If still in a link element, simply update the position of the balloon.
                 // If there was no link (e.g. inserting one), the balloon must be moved
                 // to the new position in the editing view (a new native DOM range).
-                this.balloon.updatePosition(this.getBalloonPositionData());
+                this.balloon.updatePosition(this.getBalloonPositionData()); //TODO
             }
 
             prevSelectedLink = selectedLink;
             prevSelectionParent = selectionParent;
         });
+
+        const model = editor.model;
+        const modelSelection = model.document.selection;
+        modelSelection.on('change:range', ( evt, data ) => {
+            console.log('modelselection change:range')
+            console.log(modelSelection)
+            console.log(evt)
+            console.log(data)
+            if (this.isUIVisible) {
+                console.log('modelselection hihi')
+                evt.stop();
+                evt.off();
+                //data.preventDefault();
+                //evt.preventDefault();
+                if (this.ttest != null) {
+                    console.log('this.ttest', this.ttest)
+                model.change( writer => {
+                    writer.setSelection( this.ttest );
+                } );
+                this.ttest = null;
+                }
+            }
+        });
+/*        this.listenTo( modelSelection, 'change:range', ( evt, data ) => {
+            console.log('change:range')
+            console.log(evt)
+            console.log(data)
+            if (this.isUIVisible) {
+                console.log('hihi')
+                evt.stop();
+                evt.off();
+                //evt.preventDefault();
+            }
+        });*/
     }
 
     /**
@@ -271,7 +314,7 @@ export default class InternalLinkUi extends Plugin {
         // Hide the panel after clicking the "Cancel" button.
         this.listenTo(formView, 'cancel', () => {
             this.removeFormView();
-            this.hideUI();
+            this.hideUI(2);
         });
 
         // Close the panel on esc key press when the **form has focus**.
@@ -305,13 +348,14 @@ export default class InternalLinkUi extends Plugin {
 
         // Execute action to show the form after clicking on the "Edit" button.
         this.listenTo(actionsView, 'edit', () => {
+            //console.log('edit')
             this.addFormView();
         });
 
         // Execute unlink command after clicking on the "Unlink" button.
         this.listenTo(actionsView, 'unlink', () => {
             editor.execute(COMMAND_UNLINK);
-            this.hideUI();
+            this.hideUI(3);
         });
 
         //Execute open modal command after clicking on the "Preview" button.
@@ -321,7 +365,7 @@ export default class InternalLinkUi extends Plugin {
 
         // Close the panel on esc key press when the **actions have focus**.
         actionsView.keystrokes.set('Esc', (data, cancel) => {
-            this.hideUI();
+            this.hideUI(4);
             cancel();
         });
 
@@ -371,6 +415,8 @@ export default class InternalLinkUi extends Plugin {
 	 * @type {Boolean}
 	 */
     get isUIVisible() {
+        //console.log(this.balloon.visibleView == this.formView)
+        //console.log(this.areActionsVisible)
         return this.balloon.visibleView == this.formView || this.areActionsVisible;
     }
 
@@ -407,8 +453,11 @@ export default class InternalLinkUi extends Plugin {
 
     fireEvent(id) {
         this.fireIds[id] = true
+        ////console.log(this.fireIds[0])
+        //console.log(this.fireIds[1])
+        //console.log(this.fireIds[2])
         if (this.fireIds[0] && this.fireIds[1] && this.fireIds[2]) {
-            //console.log(this.actionsView.previewButtonView)
+            ////console.log(this.actionsView.previewButtonView)
             this.fireIds[1] = false;
             this.fireIds[2] = false;
             this.editor.model.document.fire('shortDescriptionLoaded', this.actionsView.previewButtonView);
@@ -474,6 +523,7 @@ export default class InternalLinkUi extends Plugin {
         // Handle click on view document and show panel when selection is placed inside the link element.
         // Keep panel open until selection will be inside the same link element.
         this.listenTo(viewDocument, 'click', () => {
+            //console.log('this.getSelectedLinkElement()523')
             const parentLink = this.getSelectedLinkElement();
 
             if (parentLink) {
@@ -498,18 +548,26 @@ export default class InternalLinkUi extends Plugin {
         // Close the panel on the Esc key press when the editable has focus and the balloon is visible.
         this.editor.keystrokes.set('Esc', (data, cancel) => {
             if (this.isUIVisible) {
-                this.hideUI();
+                this.hideUI(5);
                 cancel();
             }
         });
+
+        //TODO: call stopListening on destroy
 
         // Close on click outside of balloon panel element.
         clickOutsideHandler({
             emitter: this.formView,
             activator: () => this.isUIVisible,
             contextElements: [ this.balloon.view.element ],
-            callback: () => this.hideUI()
+            callback: () => this.hideUI(6),
+            editor: this.editor,
+            setSel: (selection) => resetSelection(selection)
         });
+    }
+
+    resetSelection(selection) {
+        this.ttest = selection;
     }
 
     /**
@@ -525,14 +583,15 @@ export default class InternalLinkUi extends Plugin {
     getBalloonPositionData() {
         const view = this.editor.editing.view;
         const viewDocument = view.document;
+      //  console.log('this.getSelectedLinkElement()576')
         const targetLink = this.getSelectedLinkElement();
-
+      //  console.log(viewDocument.selection)
         const target = targetLink
             // When selection is inside link element, then attach panel to this element.
             ? view.domConverter.mapViewToDom(targetLink)
             // Otherwise attach panel to the selection.
             : view.domConverter.viewRangeToDom(viewDocument.selection.getFirstRange());
-
+      //  console.log(target);
         return { target };
     }
 
@@ -548,6 +607,7 @@ export default class InternalLinkUi extends Plugin {
      * @returns {module:engine/view/attributeelement~AttributeElement|null}
      */
     getSelectedLinkElement() {
+        ////console.log('a')
         const view = this.editor.editing.view;
         const selection = view.document.selection;
 
@@ -579,6 +639,7 @@ export default class InternalLinkUi extends Plugin {
      * @param {*} position A position
      */
     findLinkElementAncestor(position) {
+
         return position.getAncestors().find(ancestor => isLinkElement(ancestor));
     }
 

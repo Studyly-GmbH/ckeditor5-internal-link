@@ -28,6 +28,7 @@ export function createLinkElement(internalLinkId, { writer }) {
         { [ VIEW_INTERNAL_LINK_ID_ATTRIBUTE ]: internalLinkId},
 
         { priority: 5 });
+    console.log('utils setCustomProperty')
     writer.setCustomProperty(linkElementSymbol, true, linkElement);
 
     return linkElement;
@@ -55,49 +56,92 @@ export function replacePlaceholderInUrl(url, placeholder, value) {
     return url.replace(placeholder, encodeURI(value));
 }
 
-/* global document */
-
-/**
- * Handles clicking **outside** of a specified set of elements, then fires an action.
- *
- * **Note**: Actually, the action is executed upon `mousedown`, not `click`. It prevents
- * certain issues when the user keeps holding the mouse button and the UI cannot react
- * properly.
- *
- * @param {Object} options Configuration options.
- * @param {module:utils/dom/emittermixin~Emitter} options.emitter The emitter to which this behavior
- * should be added.
- * @param {Function} options.activator Function returning a `Boolean`, to determine whether the handler is active.
- * @param {Array.<HTMLElement>} options.contextElements HTML elements that determine the scope of the
- * handler. Clicking any of them or their descendants will **not** fire the callback.
- * @param {Function} options.callback An action executed by the handler.
- */
-export default function clickOutsideHandler( { emitter, activator, callback, contextElements } ) {
+export default function clickOutsideHandler({ emitter, activator, callback, contextElements, editor, setSel } ) {
     emitter.listenTo( document, 'mousedown', ( evt, domEvt ) => {
         if ( !activator() ) {
+            console.log('!activator')
             return;
         }
-
+        let selection = editor.model.document.selection;
         // Check if `composedPath` is `undefined` in case the browser does not support native shadow DOM.
         // Can be removed when all supported browsers support native shadow DOM.
         const path = typeof domEvt.composedPath == 'function' ? domEvt.composedPath() : [];
 
-        let modalContainer = document.querySelector('mdb-modal-container');
-
+        let modalContainer = document.querySelector('div.custom-modal.modal-dialog.modal-lg');
+        let cdkContainer = document.querySelector('modal-content');
+        console.log(domEvt.target)
         if (modalContainer != null) {
-            if (modalContainer.contains(domEvt.target)) {
-                console.log('dont trgger')
+            if (modalContainer.contains(domEvt.target) || domEvt.target.firstChild === modalContainer) {
+                console.log('MODALcontainer dont trigger')
+                evt.stop()
+                evt.off()
+                domEvt.preventDefault()
+                domEvt.stopPropagation()
+                setSel(selection);
                 return;
             }
         }
 
+        if (cdkContainer != null) {
+            if (cdkContainer.contains(domEvt.target)) {
+                evt.stop()
+                evt.off()
+                domEvt.preventDefault()
+                domEvt.stopPropagation()
+                console.log('CDKcontainer dont trigger')
+                return;
+            }
+        }
 
         for ( const contextElement of contextElements ) {
             if ( contextElement.contains( domEvt.target ) || path.includes( contextElement ) ) {
+                console.log('form dont trigger')
                 return;
             }
         }
 
+        console.log('callback hide')
         callback();
     } );
+
+    /* emitter.listenTo( document, 'click', ( evt, domEvt ) => {
+         console.log('click')
+         if ( !activator() ) {
+             console.log('!activator')
+             return;
+         }
+
+         // Check if `composedPath` is `undefined` in case the browser does not support native shadow DOM.
+         // Can be removed when all supported browsers support native shadow DOM.
+         const path = typeof domEvt.composedPath == 'function' ? domEvt.composedPath() : [];
+
+         let modalContainer = document.querySelector('mdb-modal-container');
+         let cdkContainer = document.querySelector('modal-content');
+         console.log(domEvt.target)
+         if (modalContainer != null) {
+             if (modalContainer.contains(domEvt.target) || domEvt.target.firstChild === modalContainer) {
+                 console.log('MODALcontainer dont trigger')
+                 evt.stop()
+                 evt.off()
+                 domEvt.preventDefault()
+                 domEvt.stopPropagation()
+                 /!*                editor.model.change( writer => {
+                                     writer.setSelection( selection );
+                                 } );*!/
+                 bachingas(selection);
+                 return;
+             }
+         }
+
+         if (cdkContainer != null) {
+             if (cdkContainer.contains(domEvt.target)) {
+                 evt.stop()
+                 evt.off()
+                 domEvt.preventDefault()
+                 domEvt.stopPropagation()
+                 console.log('CDKcontainer dont trigger')
+                 return;
+             }
+         }
+     });*/
 }
