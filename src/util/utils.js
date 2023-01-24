@@ -28,7 +28,6 @@ export function createLinkElement(internalLinkId, { writer }) {
         { [ VIEW_INTERNAL_LINK_ID_ATTRIBUTE ]: internalLinkId},
 
         { priority: 5 });
-    console.log('utils setCustomProperty')
     writer.setCustomProperty(linkElementSymbol, true, linkElement);
 
     return linkElement;
@@ -56,92 +55,43 @@ export function replacePlaceholderInUrl(url, placeholder, value) {
     return url.replace(placeholder, encodeURI(value));
 }
 
-export default function clickOutsideHandler({ emitter, activator, callback, contextElements, editor, setSel } ) {
+export default function clickOutsideHandler({ emitter, activator, callback, contextElements } ) {
     emitter.listenTo( document, 'mousedown', ( evt, domEvt ) => {
         if ( !activator() ) {
-            console.log('!activator')
             return;
         }
-        let selection = editor.model.document.selection;
+        console.log(domEvt.target)
         // Check if `composedPath` is `undefined` in case the browser does not support native shadow DOM.
         // Can be removed when all supported browsers support native shadow DOM.
         const path = typeof domEvt.composedPath == 'function' ? domEvt.composedPath() : [];
 
         let modalContainer = document.querySelector('div.custom-modal.modal-dialog.modal-lg');
-        let cdkContainer = document.querySelector('modal-content');
-        console.log(domEvt.target)
+        let modalContent = document.querySelector('modal-content');
+        let cdkContainer = document.querySelector('.cdk-overlay-container');
+
+        if (modalContent != null) {
+            if (modalContent.contains(domEvt.target)) {
+                return;
+            }
+        }
+
         if (modalContainer != null) {
             if (modalContainer.contains(domEvt.target) || domEvt.target.firstChild === modalContainer) {
-                console.log('MODALcontainer dont trigger')
-                evt.stop()
-                evt.off()
-                domEvt.preventDefault()
-                domEvt.stopPropagation()
-                setSel(selection);
                 return;
             }
         }
 
         if (cdkContainer != null) {
             if (cdkContainer.contains(domEvt.target)) {
-                evt.stop()
-                evt.off()
-                domEvt.preventDefault()
-                domEvt.stopPropagation()
-                console.log('CDKcontainer dont trigger')
                 return;
             }
         }
 
         for ( const contextElement of contextElements ) {
             if ( contextElement.contains( domEvt.target ) || path.includes( contextElement ) ) {
-                console.log('form dont trigger')
                 return;
             }
         }
-
-        console.log('callback hide')
         callback();
     } );
-
-    /* emitter.listenTo( document, 'click', ( evt, domEvt ) => {
-         console.log('click')
-         if ( !activator() ) {
-             console.log('!activator')
-             return;
-         }
-
-         // Check if `composedPath` is `undefined` in case the browser does not support native shadow DOM.
-         // Can be removed when all supported browsers support native shadow DOM.
-         const path = typeof domEvt.composedPath == 'function' ? domEvt.composedPath() : [];
-
-         let modalContainer = document.querySelector('mdb-modal-container');
-         let cdkContainer = document.querySelector('modal-content');
-         console.log(domEvt.target)
-         if (modalContainer != null) {
-             if (modalContainer.contains(domEvt.target) || domEvt.target.firstChild === modalContainer) {
-                 console.log('MODALcontainer dont trigger')
-                 evt.stop()
-                 evt.off()
-                 domEvt.preventDefault()
-                 domEvt.stopPropagation()
-                 /!*                editor.model.change( writer => {
-                                     writer.setSelection( selection );
-                                 } );*!/
-                 bachingas(selection);
-                 return;
-             }
-         }
-
-         if (cdkContainer != null) {
-             if (cdkContainer.contains(domEvt.target)) {
-                 evt.stop()
-                 evt.off()
-                 domEvt.preventDefault()
-                 domEvt.stopPropagation()
-                 console.log('CDKcontainer dont trigger')
-                 return;
-             }
-         }
-     });*/
 }
