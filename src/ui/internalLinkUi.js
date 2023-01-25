@@ -203,7 +203,7 @@ export default class InternalLinkUi extends Plugin {
             // when fully selected.
             if ((prevSelectedLink && !selectedLink)
                 || (!prevSelectedLink && selectionParent !== prevSelectionParent)) {
-                //this.hideUI(1);
+                //this.hideUI();
             }
             // Update the position of the panel when:
             //  * the selection remains in the original link element,
@@ -507,12 +507,8 @@ export default class InternalLinkUi extends Plugin {
             emitter: this.formView,
             activator: () => this.isUIVisible,
             contextElements: [ this.balloon.view.element ],
-            callback: () => this.hideUI(),
+            callback: () => this.hideUI()
         });
-    }
-
-    resetSelection(selection) {
-        this.ttest = selection;
     }
 
     /**
@@ -529,6 +525,7 @@ export default class InternalLinkUi extends Plugin {
         const view = this.editor.editing.view;
         const viewDocument = view.document;
         const targetLink = this.getSelectedLinkElement();
+
         const target = targetLink
             // When selection is inside link element, then attach panel to this element.
             ? view.domConverter.mapViewToDom(targetLink)
@@ -580,7 +577,6 @@ export default class InternalLinkUi extends Plugin {
      * @param {*} position A position
      */
     findLinkElementAncestor(position) {
-
         return position.getAncestors().find(ancestor => isLinkElement(ancestor));
     }
 
