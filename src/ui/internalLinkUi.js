@@ -127,6 +127,7 @@ export default class InternalLinkUi extends Plugin {
         if (!linkCommand.isEnabled) {
             return;
         }
+
         // When there's no link under the selection, go straight to the editing UI.
         if (!this.getSelectedLinkElement()) {
             this.addActionsView(false);
@@ -212,7 +213,7 @@ export default class InternalLinkUi extends Plugin {
                 // If still in a link element, simply update the position of the balloon.
                 // If there was no link (e.g. inserting one), the balloon must be moved
                 // to the new position in the editing view (a new native DOM range).
-                this.balloon.updatePosition(this.getBalloonPositionData()); //TODO
+                this.balloon.updatePosition(this.getBalloonPositionData()); //TODO improve this method, make it work like the one in ckeditor5-math
             }
 
             prevSelectedLink = selectedLink;
