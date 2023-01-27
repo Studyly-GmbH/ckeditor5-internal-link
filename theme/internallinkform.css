@@ -67,6 +67,11 @@
             cursor: pointer;
         }
 
+        & .awesomplete > ul > li.selected {
+            box-shadow:inset 0 0 0 2px #2bbbad;
+            border-style: solid;
+        }
+
         & .awesomplete > ul > li > span.wiki-title {
             cursor: pointer;
         }
