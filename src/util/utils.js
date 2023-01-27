@@ -52,7 +52,7 @@ export function createKeywordIdElement(id, { writer }) {
  * @param {*} value The value to insert instead of the placeholder
  */
 export function replacePlaceholderInUrl(url, placeholder, value) {
-    return url.replace(placeholder, encodeURI(value));
+    return url.replace(placeholder, encodeURIComponent(value));
 }
 
 /**
