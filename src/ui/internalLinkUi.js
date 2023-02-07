@@ -77,7 +77,7 @@ export default class InternalLinkUi extends Plugin {
 
         this.createToolbarButton();
 
-        // Attach lifecycle actions to the the balloon.
+        // Attach lifecycle actions to the balloon.
         this.enableUserBalloonInteractions();
     }
 
@@ -185,7 +185,6 @@ export default class InternalLinkUi extends Plugin {
      */
     startUpdatingUI() {
         const editor = this.editor;
-
         let prevSelectedLink = this.getSelectedLinkElement();
         let prevSelectionParent = this.getSelectionParent();
 
@@ -205,7 +204,7 @@ export default class InternalLinkUi extends Plugin {
             // when fully selected.
             if ((prevSelectedLink && !selectedLink)
                 || (!prevSelectedLink && selectionParent !== prevSelectionParent)) {
-                this.hideUI();
+                //this.hideUI();
             }
             // Update the position of the panel when:
             //  * the selection remains in the original link element,
@@ -214,7 +213,7 @@ export default class InternalLinkUi extends Plugin {
                 // If still in a link element, simply update the position of the balloon.
                 // If there was no link (e.g. inserting one), the balloon must be moved
                 // to the new position in the editing view (a new native DOM range).
-                this.balloon.updatePosition(this.getBalloonPositionData());
+                this.balloon.updatePosition(this.getBalloonPositionData()); //TODO improve this method, make it work like the one in ckeditor5-math
             }
 
             prevSelectedLink = selectedLink;
@@ -408,7 +407,6 @@ export default class InternalLinkUi extends Plugin {
     fireEvent(id) {
         this.fireIds[id] = true
         if (this.fireIds[0] && this.fireIds[1] && this.fireIds[2]) {
-            //console.log(this.actionsView.previewButtonView)
             this.fireIds[1] = false;
             this.fireIds[2] = false;
             this.editor.model.document.fire('shortDescriptionLoaded', this.actionsView.previewButtonView);
@@ -503,6 +501,8 @@ export default class InternalLinkUi extends Plugin {
             }
         });
 
+        //TODO: call stopListening on destroy
+
         // Close on click outside of balloon panel element.
         clickOutsideHandler({
             emitter: this.formView,
@@ -532,7 +532,6 @@ export default class InternalLinkUi extends Plugin {
             ? view.domConverter.mapViewToDom(targetLink)
             // Otherwise attach panel to the selection.
             : view.domConverter.viewRangeToDom(viewDocument.selection.getFirstRange());
-
         return { target };
     }
 

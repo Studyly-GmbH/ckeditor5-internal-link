@@ -67,14 +67,26 @@
             cursor: pointer;
         }
 
+        & .awesomplete > ul > li.selected {
+            box-shadow:inset 0 0 0 2px #2bbbad;
+            border-style: solid;
+        }
+
+        & .awesomplete > ul > li > span.wiki-title {
+            cursor: pointer;
+        }
+
+        & .awesomplete > ul > li > span.wiki-title > a.wiki-preview-popup {
+            cursor: pointer;
+        }
+
         & .awesomplete > ul > li:hover {
-            background: var(--ck-color-base-focus);
+            background: #e9ecef;
             color: black;
         }
 
         & .awesomplete > ul > li[aria-selected="true"] {
-            background: var(--ck-color-base-active);
-            color: white;
+            background: #e9ecef;
         }
 
         & .awesomplete mark {
@@ -85,14 +97,14 @@
         & .awesomplete span.wiki-title {
             float: right;
             color: #868e96;
-            padding-left: 1rem;
+            padding-left: 1.5rem;
         }
 
         & .awesomplete a.wiki-preview-popup {
               float: right;
               color: dodgerblue;
               padding-left: 0.3rem;
-              padding-right: 0.1rem;
+              padding-right: 0.2rem;
         }
 
         & .ul {

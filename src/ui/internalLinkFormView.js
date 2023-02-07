@@ -228,6 +228,9 @@ export default class InternalLinkFormView extends View {
         this.registerAutocompleteKeyUpEvent();
 
         this.titleInputView.inputView.element.addEventListener('awesomplete-selectcomplete', function(event) {
+
+            //set
+            this.autocomplete.liToSelect = event.text.value[1]
             // Reset the value to ensure that the observables are triggered even if the same value is selected.
             this.set(PROPERTY_KEYWORD_ID, '');
             this.set(PROPERTY_INTERNAL_LINK_ID, '');
@@ -281,6 +284,7 @@ export default class InternalLinkFormView extends View {
                         }
                     }
             );
+                this.autocomplete.liToSelect = PROPERTY_KEYWORD_ID;
                 this.autocomplete.list = response.data;
             })
             .catch((e) => {

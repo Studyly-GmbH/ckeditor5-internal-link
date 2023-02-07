@@ -52,10 +52,8 @@ export function createKeywordIdElement(id, { writer }) {
  * @param {*} value The value to insert instead of the placeholder
  */
 export function replacePlaceholderInUrl(url, placeholder, value) {
-    return url.replace(placeholder, encodeURI(value));
+    return url.replace(placeholder, encodeURIComponent(value));
 }
-
-/* global document */
 
 /**
  * Handles clicking **outside** of a specified set of elements, then fires an action.
@@ -72,32 +70,42 @@ export function replacePlaceholderInUrl(url, placeholder, value) {
  * handler. Clicking any of them or their descendants will **not** fire the callback.
  * @param {Function} options.callback An action executed by the handler.
  */
-export default function clickOutsideHandler( { emitter, activator, callback, contextElements } ) {
+export default function clickOutsideHandler({ emitter, activator, callback, contextElements } ) {
     emitter.listenTo( document, 'mousedown', ( evt, domEvt ) => {
         if ( !activator() ) {
             return;
         }
-
         // Check if `composedPath` is `undefined` in case the browser does not support native shadow DOM.
         // Can be removed when all supported browsers support native shadow DOM.
         const path = typeof domEvt.composedPath == 'function' ? domEvt.composedPath() : [];
 
-        let modalContainer = document.querySelector('mdb-modal-container');
+        let modalContainer = document.querySelector('div.custom-modal.modal-dialog.modal-lg');
+        let modalContent = document.querySelector('modal-content');
+        let cdkContainer = document.querySelector('.cdk-overlay-container');
 
-        if (modalContainer != null) {
-            if (modalContainer.contains(domEvt.target)) {
-                console.log('dont trgger')
+        if (modalContent != null) {
+            if (modalContent.contains(domEvt.target)) {
                 return;
             }
         }
 
+        if (modalContainer != null) {
+            if (modalContainer.contains(domEvt.target) || domEvt.target.firstChild === modalContainer) {
+                return;
+            }
+        }
+
+        if (cdkContainer != null) {
+            if (cdkContainer.contains(domEvt.target)) {
+                return;
+            }
+        }
 
         for ( const contextElement of contextElements ) {
             if ( contextElement.contains( domEvt.target ) || path.includes( contextElement ) ) {
                 return;
             }
         }
-
         callback();
     } );
 }
