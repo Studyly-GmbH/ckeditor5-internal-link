@@ -229,6 +229,9 @@ export default class InternalLinkFormView extends View {
 
         this.titleInputView.inputView.element.addEventListener('awesomplete-selectcomplete', function(event) {
             // Reset the value to ensure that the observables are triggered even if the same value is selected.
+            console.log('value0', event.text.value[0])
+            console.log('value1', event.text.value[1])
+            this.autocomplete.test = event.text.value[1]
             this.set(PROPERTY_KEYWORD_ID, '');
             this.set(PROPERTY_INTERNAL_LINK_ID, '');
             this.set(PROPERTY_TITLE, '');
@@ -236,6 +239,7 @@ export default class InternalLinkFormView extends View {
             this.set(PROPERTY_INTERNAL_LINK_ID, event.text.value[0]);
             PROPERTY_KEYWORD_ID = event.text.value[1]
             this.set(PROPERTY_KEYWORD, event.text.label);
+            console.log('awesomplete-selectcomplete', PROPERTY_KEYWORD_ID, PROPERTY_INTERNAL_LINK_ID, PROPERTY_KEYWORD)
         }.bind(this));
 
     }
@@ -270,6 +274,7 @@ export default class InternalLinkFormView extends View {
 
     loadAutocompleteData() {
         this.set(PROPERTY_INTERNAL_LINK_ID, '');
+        console.log('loadAutocompleteData', PROPERTY_KEYWORD_ID)
         this.dataContext.getAutocompleteItems(this.titleInputView.inputView.element.value)
             .then(response => {
                 response.data = response.data.map(
@@ -281,7 +286,9 @@ export default class InternalLinkFormView extends View {
                         }
                     }
             );
+                this.autocomplete.test = PROPERTY_KEYWORD_ID;
                 this.autocomplete.list = response.data;
+                //console.log('loadAutocompleteData2', PROPERTY_KEYWORD_ID)
             })
             .catch((e) => {
                 if (e.name === "AxiosError") {

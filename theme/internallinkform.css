@@ -86,8 +86,7 @@
         }
 
         & .awesomplete > ul > li[aria-selected="true"] {
-            background: var(--ck-color-base-active);
-            color: white;
+            background: #e9ecef;
         }
 
         & .awesomplete mark {
