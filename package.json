@@ -2,6 +2,7 @@
   "name": "@samhammer/ckeditor5-internallink-plugin",
   "version": "1.0.13",
   "description": "A generic ckeditor plugin to create link tags containing an internal identifier instead of a url.",
+  "main": "src/internalLink.js",
   "keywords": [
     "ckeditor",
     "ckeditor5",
@@ -49,5 +50,6 @@
   "eslintIgnore": [
     "src/lib/**",
     "packages/**"
-  ]
+  ],
+  "types": "src/internalLink.d.ts"
 }
