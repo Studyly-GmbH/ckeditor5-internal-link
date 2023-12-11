@@ -1,3 +1,9 @@
+import { Plugin } from '@ckeditor/ckeditor5-core';
+
+declare module 'ckeditor5-internal-link' {
+    export default class InternalLink extends Plugin {}
+}
+
 export interface InternalLinkConfig {
     testmode?: boolean
     autocompleteUrl?: string
@@ -7,7 +13,7 @@ export interface InternalLinkConfig {
     previewUrl?: string
 }
 
-declare module '@ckeditor/ckeditor5-core/src/editor/editorconfig' {
+declare module '@ckeditor/ckeditor5-core' {
     interface EditorConfig {
         internallink?: InternalLinkConfig
     }
