@@ -2,9 +2,8 @@
  * @module internalLink/internalLinkCommand
  */
 
-import Command from '@ckeditor/ckeditor5-core/src/command';
+import { Command, toMap } from 'ckeditor5';
 import findLinkRange from '../util/findlinkrange';
-import toMap from '@ckeditor/ckeditor5-utils/src/tomap';
 import InternalLinkDataContext from '../data/internalLinkDataContext';
 
 import {

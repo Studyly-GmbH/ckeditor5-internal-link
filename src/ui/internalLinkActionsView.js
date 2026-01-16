@@ -2,13 +2,7 @@
  * @module internalLink/ui/internalLinkActionsView
  */
 
-import View from '@ckeditor/ckeditor5-ui/src/view';
-import ViewCollection from '@ckeditor/ckeditor5-ui/src/viewcollection';
-
-import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
-
-import FocusTracker from '@ckeditor/ckeditor5-utils/src/focustracker';
-import KeystrokeHandler from '@ckeditor/ckeditor5-utils/src/keystrokehandler';
+import { ButtonView, FocusTracker, KeystrokeHandler, View, ViewCollection } from 'ckeditor5';
 
 import { createButton, createFocusCycler, registerFocusableViews } from './uiUtils';
 

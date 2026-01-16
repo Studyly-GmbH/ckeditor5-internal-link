@@ -4,18 +4,11 @@
  * @module internalLink/ui/InternalLinkFormView
  */
 
-import View from '@ckeditor/ckeditor5-ui/src/view';
-import ViewCollection from '@ckeditor/ckeditor5-ui/src/viewcollection';
+import { FocusTracker, InputTextView, KeystrokeHandler, submitHandler, View, ViewCollection, icons,LabeledFieldView } from 'ckeditor5';
+// TODO @Martin STUD-89 fix missing import
 
-import LabeledInputView from '@ckeditor/ckeditor5-ui/src/labeledinput/labeledinputview';
-import InputTextView from '@ckeditor/ckeditor5-ui/src/inputtext/inputtextview';
-
-import submitHandler from '@ckeditor/ckeditor5-ui/src/bindings/submithandler';
-import FocusTracker from '@ckeditor/ckeditor5-utils/src/focustracker';
-import KeystrokeHandler from '@ckeditor/ckeditor5-utils/src/keystrokehandler';
-
-import checkIcon from '@ckeditor/ckeditor5-core/theme/icons/check.svg';
-import cancelIcon from '@ckeditor/ckeditor5-core/theme/icons/cancel.svg';
+const checkIcon = icons.check;
+const cancelIcon = icons.cancel;
 
 import { createButton, createFocusCycler, registerFocusableViews } from './uiUtils';
 
@@ -118,7 +111,7 @@ export default class InternalLinkFormView extends View {
         /**
          * The id input view.
          *
-         * @member {module:ui/labeledinput/labeledinputview~LabeledInputView}
+         * @member {module:ui/labeledfield/labeledfieldview~LabeledFieldView}
          */
         this.titleInputView = this.createTitleInput();
 
@@ -194,13 +187,13 @@ export default class InternalLinkFormView extends View {
      * Creates a labeled input view to input the title.
      *
      * @private
-     * @returns {module:ui/labeledinput/labeledinputview~LabeledInputView} Labeled input view instance.
+     * @returns {module:ui/labeledfield/labeledfieldview~LabeledFieldView} Labeled input view instance.
      */
     createTitleInput() {
         const t = this.locale.t;
 
-        const labeledInput = new LabeledInputView(this.locale, InputTextView);
-        labeledInput.inputView.placeholder = t('Enter title');
+        const labeledInput = new LabeledFieldView(this.locale, ()=> new InputTextView(this.locale) );
+        labeledInput.fieldView.placeholder = t('Enter title');
         labeledInput.bind('value').to(this, PROPERTY_KEYWORD);
 
         return labeledInput;
@@ -211,7 +204,7 @@ export default class InternalLinkFormView extends View {
             return;
         }
 
-        this.autocomplete = new Awesomplete(this.titleInputView.inputView.element, {
+        this.autocomplete = new Awesomplete(this.titleInputView.fieldView.element, {
             list: [],
             filter(e) {
                 // Dont filter client side. The web service returns the data that should be shown only.
@@ -227,7 +220,7 @@ export default class InternalLinkFormView extends View {
 
         this.registerAutocompleteKeyUpEvent();
 
-        this.titleInputView.inputView.element.addEventListener('awesomplete-selectcomplete', function(event) {
+        this.titleInputView.fieldView.element.addEventListener('awesomplete-selectcomplete', function(event) {
 
             //set
             this.autocomplete.liToSelect = event.text.value[1]
@@ -246,7 +239,7 @@ export default class InternalLinkFormView extends View {
     registerAutocompleteKeyUpEvent() {
         let timeout = null;
 
-        this.titleInputView.inputView.element.onkeyup = function(event) {
+        this.titleInputView.fieldView.element.onkeyup = function(event) {
 
             if (event.key == 'ArrowDown'
                 || event.key == 'ArrowUp'
@@ -273,7 +266,7 @@ export default class InternalLinkFormView extends View {
 
     loadAutocompleteData() {
         this.set(PROPERTY_INTERNAL_LINK_ID, '');
-        this.dataContext.getAutocompleteItems(this.titleInputView.inputView.element.value)
+        this.dataContext.getAutocompleteItems(this.titleInputView.fieldView.element.value)
             .then(response => {
                 response.data = response.data.map(
                     obj => {
