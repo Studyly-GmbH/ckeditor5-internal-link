@@ -5,8 +5,6 @@
  */
 
 import { FocusTracker, InputTextView, KeystrokeHandler, submitHandler, View, ViewCollection, icons,LabeledFieldView } from 'ckeditor5';
-// TODO @Martin STUD-89 fix missing import
-
 const checkIcon = icons.check;
 const cancelIcon = icons.cancel;
 
