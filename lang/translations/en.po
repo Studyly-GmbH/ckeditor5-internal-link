@@ -4,38 +4,29 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-msgctxt "Toolbar button for the internal link action and label of the edit textbox"
 msgid "Internal link"
 msgstr "Article link"
 
-msgctxt "The unlink button in edit area."
 msgid "Unlink"
 msgstr "Unlink"
 
-msgctxt "The edit button in edit area."
 msgid "Edit link"
 msgstr "Edit link"
 
-msgctxt "Tooltip on the link in edit area."
 msgid "Open link in new tab"
 msgstr "Open link in new tab"
 
-msgctxt "Label of an invalid link in edit area."
 msgid "This link is invalid"
 msgstr "This link is invalid"
 
-msgctxt "Label of an internal link if the title could not be requested."
 msgid "Error requesting title"
 msgstr "Error requesting title"
 
-msgctxt "Placeholder of the autocomplete textbox to find an internal item."
 msgid "Enter title"
 msgstr "Enter title"
 
-msgctxt "The keyword selected"
 msgid "keyword"
 msgstr "keyword"
 
-msgctxt "show preview of wiki"
 msgid "show preview of wiki"
 msgstr "show preview of wiki"
