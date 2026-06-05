@@ -34,8 +34,6 @@ export const CONFIG_KEYWORD_URL = 'internallink.keywordUrl';
 
 export const CONFIG_SHORT_DESCRIPTION_URL = 'internallink.shortDescriptionUrl';
 
-export const CONFIG_AXIOS_INSTANCE = 'internallink.axiosInstance';
-
 export const CONFIG_PREVIEW_URL = 'internallink.previewUrl';
 
 export const URL_PLACEHOLDER_KEYWORD_ID = '{wikiKeywordId}';

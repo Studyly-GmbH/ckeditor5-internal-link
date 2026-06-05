@@ -9,7 +9,6 @@ export interface InternalLinkConfig {
     autocompleteUrl?: string
     keywordUrl?: string
     shortDescriptionUrl?: string
-    axiosInstance?: any
     previewUrl?: string
 }
 

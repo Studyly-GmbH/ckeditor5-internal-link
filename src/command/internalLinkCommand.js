@@ -77,11 +77,7 @@ export default class InternalLinkCommand extends Command {
                         this.title = response.data[0].shortDescription; //TODO: change this later
                     })
                     .catch((e) => {
-                        if (e.name === "AxiosError") {
-                            console.log('axiosError', e.code, e.message)
-                        } else {
-                            console.log(e);
-                        }
+                        console.log( 'fetchError', e.code || e.name, e.message || e );
                         this.title = t('Error requesting title');
                     }).then(_ => {
                         this.ui.fireEvent(1); //fires everytime when the new short description is loaded
@@ -103,12 +99,8 @@ export default class InternalLinkCommand extends Command {
                             this.keywordButtonView.label = response.data.keyword;
                         }
                     }).catch((e) => {
-                    if (e.name === "AxiosError") {
-                        console.log('axiosError', e.code, e.message)
-                    } else {
-                        console.log(e);
-                    }
-                    this.keyword = t('Error requesting keyword');
+                        console.log( 'fetchError', e.code || e.name, e.message || e );
+                        this.keyword = t('Error requesting keyword');
                 });
             } else {
                 this.keyword = '';

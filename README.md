@@ -65,8 +65,7 @@ InlineEditor
 			testmode: false,
 			autocompleteurl: '',
 			titleurl: '',
-			previewurl: '',
-			axiosInstance: undefined
+			previewurl: ''
 		}
 	} )
 	.then( ... )

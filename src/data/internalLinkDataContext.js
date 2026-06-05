@@ -2,15 +2,12 @@
  * @module InternalLink/InternalLinkDataContext
  */
 
-import axios from 'axios';
-
 import { replacePlaceholderInUrl } from '../util/utils';
 
 import {
     CONFIG_TEST_MODE,
     CONFIG_AUTOCOMPLETE_URL,
     CONFIG_SHORT_DESCRIPTION_URL,
-    CONFIG_AXIOS_INSTANCE,
     URL_PLACEHOLDER_SHORT_DESCRIPTION_ID,
     URL_PLACEHOLDER_SEARCH_TERM,
     CONFIG_KEYWORD_URL,
@@ -39,7 +36,7 @@ export default class InternalLinkDataContext {
         if (isTestMode) {
             return this.getAutocompleteTestData(searchTerm);
         }
-        return this.getAxiosInstance().get(autocompleteUrl, { withCredentials: true });
+        return this.getJsonWithCredentials( autocompleteUrl );
     }
 
     /**
@@ -55,7 +52,7 @@ export default class InternalLinkDataContext {
             return this.getTitleTestData(itemId);
         }
 
-        return this.getAxiosInstance().get(shortDescriptionUrl,  { withCredentials: true });
+        return this.getJsonWithCredentials( shortDescriptionUrl );
     }
 
     /**
@@ -76,7 +73,7 @@ export default class InternalLinkDataContext {
             return this.getTitleTestData(itemId);
         }
 
-        return this.getAxiosInstance().get(keyWordUrl,  { withCredentials: true });
+        return  this.getJsonWithCredentials( keyWordUrl );
     }
 
     /**
@@ -111,17 +108,21 @@ export default class InternalLinkDataContext {
         return Promise.resolve({ data: title });
     }
 
-    /**
-     * Gets the axios instance
-     */
-    getAxiosInstance() {
-        const customAxiosInstance = this.editor.config.get(CONFIG_AXIOS_INSTANCE);
+    async getJsonWithCredentials( url ) {
+        const response = await fetch( url, {
+            method: 'GET',
+            credentials: 'include'
+        } );
 
-        if (customAxiosInstance) {
-            return customAxiosInstance;
+        if ( !response.ok ) {
+            throw new Error( `Request failed: ${ response.status } ${ response.statusText }` );
         }
 
-        return axios;
-    }
+        const data = await response.json();
 
+        // Axios-like response shape, so existing code using response.data still works.
+        return {
+            data
+        };
+    }
 }

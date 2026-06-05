@@ -279,11 +279,7 @@ export default class InternalLinkFormView extends View {
                 this.autocomplete.list = response.data;
             })
             .catch((e) => {
-                if (e.name === "AxiosError") {
-                    console.log('axiosError', e.code, e.message)
-                } else {
-                    console.log(e);
-                }
+                console.log( 'fetchError', e.code || e.name, e.message || e );
                 this.autocomplete.list = [];
             });
     }
