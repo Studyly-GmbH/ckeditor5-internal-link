@@ -9,7 +9,7 @@ import clickOutsideHandler from '../util/utils';
 import InternalLinkFormView from './internalLinkFormView';
 import InternalLinkActionsView from './internalLinkActionsView';
 
-import LinkIcon from '../../theme/icons/link.svg';
+import linkIcon from '../../theme/icons/link.svg';
 
 import { createButton } from './uiUtils';
 import { isLinkElement } from '../util/utils';
@@ -99,7 +99,7 @@ export default class InternalLinkUi extends Plugin {
         } );
 
         editor.ui.componentFactory.add(BUTTON_LINK, locale => {
-            const button = createButton(t('Internal link'), LinkIcon, locale);
+            const button = createButton(t('Internal link'), linkIcon, locale);
             button.isEnabled = true;
 
             // Disables the button if the link command is not enabled

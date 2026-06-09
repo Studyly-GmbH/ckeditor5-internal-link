@@ -4,9 +4,8 @@
  * @module internalLink/ui/InternalLinkFormView
  */
 
-import { FocusTracker, InputTextView, KeystrokeHandler, submitHandler, View, ViewCollection, icons,LabeledFieldView } from 'ckeditor5';
-const checkIcon = icons.check;
-const cancelIcon = icons.cancel;
+import { FocusTracker, InputTextView, KeystrokeHandler, submitHandler, View, ViewCollection, LabeledFieldView, IconCheck, IconCancel} from 'ckeditor5';
+
 
 import { createButton, createFocusCycler, registerFocusableViews } from './uiUtils';
 
@@ -118,7 +117,7 @@ export default class InternalLinkFormView extends View {
          *
          * @member {module:ui/button/buttonview~ButtonView}
          */
-        this.saveButtonView = createButton(t('Save'), checkIcon, this.locale, 'ck-button-save');
+        this.saveButtonView = createButton(t('Save'), IconCheck, this.locale, 'ck-button-save');
         this.saveButtonView.type = 'submit';
         this.saveButtonView.bind('isEnabled').to(this, PROPERTY_INTERNAL_LINK_ID);
 
@@ -127,7 +126,7 @@ export default class InternalLinkFormView extends View {
          *
          * @member {module:ui/button/buttonview~ButtonView}
          */
-        this.cancelButtonView = createButton(t('Cancel'), cancelIcon, this.locale, 'ck-button-cancel');
+        this.cancelButtonView = createButton(t('Cancel'), IconCancel, this.locale, 'ck-button-cancel');
         this.cancelButtonView.delegate('execute').to(this, 'cancel');
 
         this.setTemplate({
