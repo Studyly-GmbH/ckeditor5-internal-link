@@ -10,7 +10,7 @@
     "ckeditor5-feature"
   ],
   "dependencies": {
-    "ckeditor5": "46.1.1",
+    "ckeditor5": "47.3.0",
     "awesomplete": "file:awesomplete"
   },
   "devDependencies": {
