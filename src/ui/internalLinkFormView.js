@@ -19,7 +19,6 @@ import {
 } from '../util/constants';
 
 import '../../theme/internallinkform.css';
-import {getTitlesString} from "../util/utils";
 
 /**
  * The internal link form view controller class.
@@ -191,7 +190,7 @@ export default class InternalLinkFormView extends View {
 
         const labeledInput = new LabeledFieldView(this.locale, ()=> new InputTextView(this.locale) );
         labeledInput.fieldView.placeholder = t('Enter title');
-        labeledInput.bind('value').to(this, PROPERTY_KEYWORD);
+        labeledInput.fieldView.bind( 'value' ).to( this, PROPERTY_KEYWORD );
 
         return labeledInput;
     }
@@ -218,7 +217,6 @@ export default class InternalLinkFormView extends View {
         this.registerAutocompleteKeyUpEvent();
 
         this.titleInputView.fieldView.element.addEventListener('awesomplete-selectcomplete', function(event) {
-
             //set
             this.autocomplete.liToSelect = event.text.value[1]
             // Reset the value to ensure that the observables are triggered even if the same value is selected.
@@ -227,6 +225,8 @@ export default class InternalLinkFormView extends View {
             this.set(PROPERTY_TITLE, '');
 
             this.set(PROPERTY_INTERNAL_LINK_ID, event.text.value[0]);
+            //has to be set this way (not like the commented out code otherwise it dont work)
+            //this.set( PROPERTY_KEYWORD_ID, event.text.value[1] );
             PROPERTY_KEYWORD_ID = event.text.value[1]
             this.set(PROPERTY_KEYWORD, event.text.label);
         }.bind(this));
@@ -290,10 +290,6 @@ export default class InternalLinkFormView extends View {
         if (this.autocomplete) {
             this.autocomplete.destroy();
         }
-    }
-
-    wikiTitlesToString(list) {
-        return list.join(', ')
     }
 
 }
