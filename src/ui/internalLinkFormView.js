@@ -96,7 +96,7 @@ export default class InternalLinkFormView extends View {
         this.keystrokes = new KeystrokeHandler();
 
         /**
-         * Helps cycling over {@link #focusables} in the form.
+         * Helps to cycle over {@link #focusables} in the form.
          *
          * @readonly
          * @protected
@@ -135,10 +135,7 @@ export default class InternalLinkFormView extends View {
                 class: [
                     'ck',
                     'ck-internalLink-form',
-                ],
-
-                // https://github.com/ckeditor/ckeditor5-link/issues/90
-                tabindex: '-1'
+                ]
             },
 
             children: [
@@ -268,7 +265,7 @@ export default class InternalLinkFormView extends View {
                 response.data = response.data.map(
                     obj => {
                         return {
-                            "label" : obj.keyword /*+ ' - ' + this.wikiTitlesToString(obj.searchWikiPage.titles)*/,
+                            "label" : obj.keyword,
                             "value" : [obj.searchWikiPage.id, obj.keywordId],
                             "title" : obj.searchWikiPage.titles
                         }
@@ -293,16 +290,3 @@ export default class InternalLinkFormView extends View {
     }
 
 }
-
-/**
- * Fired when the form view is submitted (when one of the children triggered the submit event),
- * e.g. click on {@link #saveButtonView}.
- *
- * @event submit
- */
-
-/**
- * Fired when the form view is canceled, e.g. click on {@link #cancelButtonView}.
- *
- * @event cancel
- */
