@@ -2,9 +2,8 @@
  * @module internalLink/internalLinkCommand
  */
 
-import Command from '@ckeditor/ckeditor5-core/src/command';
+import { Command, toMap } from 'ckeditor5';
 import findLinkRange from '../util/findlinkrange';
-import toMap from '@ckeditor/ckeditor5-utils/src/tomap';
 import InternalLinkDataContext from '../data/internalLinkDataContext';
 
 import {
@@ -78,11 +77,7 @@ export default class InternalLinkCommand extends Command {
                         this.title = response.data[0].shortDescription; //TODO: change this later
                     })
                     .catch((e) => {
-                        if (e.name === "AxiosError") {
-                            console.log('axiosError', e.code, e.message)
-                        } else {
-                            console.log(e);
-                        }
+                        console.log( 'fetchError', e.code || e.name, e.message || e );
                         this.title = t('Error requesting title');
                     }).then(_ => {
                         this.ui.fireEvent(1); //fires everytime when the new short description is loaded
@@ -104,12 +99,8 @@ export default class InternalLinkCommand extends Command {
                             this.keywordButtonView.label = response.data.keyword;
                         }
                     }).catch((e) => {
-                    if (e.name === "AxiosError") {
-                        console.log('axiosError', e.code, e.message)
-                    } else {
-                        console.log(e);
-                    }
-                    this.keyword = t('Error requesting keyword');
+                        console.log( 'fetchError', e.code || e.name, e.message || e );
+                        this.keyword = t('Error requesting keyword');
                 });
             } else {
                 this.keyword = '';

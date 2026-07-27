@@ -1,4 +1,4 @@
-import { Plugin } from '@ckeditor/ckeditor5-core';
+import { Plugin } from 'ckeditor5';
 
 declare module 'ckeditor5-internal-link' {
     export default class InternalLink extends Plugin {}
@@ -9,7 +9,6 @@ export interface InternalLinkConfig {
     autocompleteUrl?: string
     keywordUrl?: string
     shortDescriptionUrl?: string
-    axiosInstance?: any
     previewUrl?: string
 }
 

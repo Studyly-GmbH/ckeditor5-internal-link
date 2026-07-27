@@ -2,13 +2,12 @@
  * @module InternalLink/InternalLink
  */
 
-import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
+import { Plugin, TwoStepCaretMovement } from 'ckeditor5';
 
 import InternalLinkConfig from './config/internalLinkConfig';
 import InternalLinkCommandRegistration from './command/internalLinkCommandRegistration';
 import InternalLinkEditing from './internalLinkEditing';
 import InternalLinkUi from './ui/internalLinkUi';
-import {TwoStepCaretMovement} from "@ckeditor/ckeditor5-typing";
 import TwoStepCaretMovementWithoutSpace from "./util/twostepcaretmovementwithoutspace";
 
 /**

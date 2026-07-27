@@ -2,8 +2,7 @@
  * @module internalLink/ui/uiUtils
  */
 
-import FocusCycler from '@ckeditor/ckeditor5-ui/src/focuscycler';
-import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
+import { ButtonView, FocusCycler } from 'ckeditor5';
 
 /**
 * Creates a button view.

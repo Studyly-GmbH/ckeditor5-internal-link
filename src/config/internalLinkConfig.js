@@ -2,13 +2,12 @@
  * @module internalLink/internalLinkConfig
  */
 
-import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
+import { Plugin } from 'ckeditor5';
 
 import {
     CONFIG_TEST_MODE,
     CONFIG_AUTOCOMPLETE_URL,
     CONFIG_SHORT_DESCRIPTION_URL,
-    CONFIG_AXIOS_INSTANCE,
     CONFIG_PREVIEW_URL, CONFIG_KEYWORD_URL
 } from '../util/constants';
 
@@ -49,7 +48,6 @@ export default class InternalLinkConfig extends Plugin {
         editor.config.define(CONFIG_AUTOCOMPLETE_URL, '');
         editor.config.define(CONFIG_SHORT_DESCRIPTION_URL, '');
         editor.config.define(CONFIG_KEYWORD_URL, '');
-        editor.config.define(CONFIG_AXIOS_INSTANCE, undefined);
         editor.config.define(CONFIG_PREVIEW_URL, 'http://www.google.de?q={internalLinkId}');
     }
 

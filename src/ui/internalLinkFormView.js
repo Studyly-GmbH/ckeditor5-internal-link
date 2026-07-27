@@ -4,18 +4,8 @@
  * @module internalLink/ui/InternalLinkFormView
  */
 
-import View from '@ckeditor/ckeditor5-ui/src/view';
-import ViewCollection from '@ckeditor/ckeditor5-ui/src/viewcollection';
+import { FocusTracker, InputTextView, KeystrokeHandler, submitHandler, View, ViewCollection, LabeledFieldView, IconCheck, IconCancel} from 'ckeditor5';
 
-import LabeledInputView from '@ckeditor/ckeditor5-ui/src/labeledinput/labeledinputview';
-import InputTextView from '@ckeditor/ckeditor5-ui/src/inputtext/inputtextview';
-
-import submitHandler from '@ckeditor/ckeditor5-ui/src/bindings/submithandler';
-import FocusTracker from '@ckeditor/ckeditor5-utils/src/focustracker';
-import KeystrokeHandler from '@ckeditor/ckeditor5-utils/src/keystrokehandler';
-
-import checkIcon from '@ckeditor/ckeditor5-core/theme/icons/check.svg';
-import cancelIcon from '@ckeditor/ckeditor5-core/theme/icons/cancel.svg';
 
 import { createButton, createFocusCycler, registerFocusableViews } from './uiUtils';
 
@@ -29,7 +19,6 @@ import {
 } from '../util/constants';
 
 import '../../theme/internallinkform.css';
-import {getTitlesString} from "../util/utils";
 
 /**
  * The internal link form view controller class.
@@ -107,7 +96,7 @@ export default class InternalLinkFormView extends View {
         this.keystrokes = new KeystrokeHandler();
 
         /**
-         * Helps cycling over {@link #focusables} in the form.
+         * Helps to cycle over {@link #focusables} in the form.
          *
          * @readonly
          * @protected
@@ -118,7 +107,7 @@ export default class InternalLinkFormView extends View {
         /**
          * The id input view.
          *
-         * @member {module:ui/labeledinput/labeledinputview~LabeledInputView}
+         * @member {module:ui/labeledfield/labeledfieldview~LabeledFieldView}
          */
         this.titleInputView = this.createTitleInput();
 
@@ -127,7 +116,7 @@ export default class InternalLinkFormView extends View {
          *
          * @member {module:ui/button/buttonview~ButtonView}
          */
-        this.saveButtonView = createButton(t('Save'), checkIcon, this.locale, 'ck-button-save');
+        this.saveButtonView = createButton(t('Save'), IconCheck, this.locale, 'ck-button-save');
         this.saveButtonView.type = 'submit';
         this.saveButtonView.bind('isEnabled').to(this, PROPERTY_INTERNAL_LINK_ID);
 
@@ -136,7 +125,7 @@ export default class InternalLinkFormView extends View {
          *
          * @member {module:ui/button/buttonview~ButtonView}
          */
-        this.cancelButtonView = createButton(t('Cancel'), cancelIcon, this.locale, 'ck-button-cancel');
+        this.cancelButtonView = createButton(t('Cancel'), IconCancel, this.locale, 'ck-button-cancel');
         this.cancelButtonView.delegate('execute').to(this, 'cancel');
 
         this.setTemplate({
@@ -146,10 +135,7 @@ export default class InternalLinkFormView extends View {
                 class: [
                     'ck',
                     'ck-internalLink-form',
-                ],
-
-                // https://github.com/ckeditor/ckeditor5-link/issues/90
-                tabindex: '-1'
+                ]
             },
 
             children: [
@@ -194,14 +180,14 @@ export default class InternalLinkFormView extends View {
      * Creates a labeled input view to input the title.
      *
      * @private
-     * @returns {module:ui/labeledinput/labeledinputview~LabeledInputView} Labeled input view instance.
+     * @returns {module:ui/labeledfield/labeledfieldview~LabeledFieldView} Labeled input view instance.
      */
     createTitleInput() {
         const t = this.locale.t;
 
-        const labeledInput = new LabeledInputView(this.locale, InputTextView);
-        labeledInput.inputView.placeholder = t('Enter title');
-        labeledInput.bind('value').to(this, PROPERTY_KEYWORD);
+        const labeledInput = new LabeledFieldView(this.locale, ()=> new InputTextView(this.locale) );
+        labeledInput.fieldView.placeholder = t('Enter title');
+        labeledInput.fieldView.bind( 'value' ).to( this, PROPERTY_KEYWORD );
 
         return labeledInput;
     }
@@ -211,7 +197,7 @@ export default class InternalLinkFormView extends View {
             return;
         }
 
-        this.autocomplete = new Awesomplete(this.titleInputView.inputView.element, {
+        this.autocomplete = new Awesomplete(this.titleInputView.fieldView.element, {
             list: [],
             filter(e) {
                 // Dont filter client side. The web service returns the data that should be shown only.
@@ -227,8 +213,7 @@ export default class InternalLinkFormView extends View {
 
         this.registerAutocompleteKeyUpEvent();
 
-        this.titleInputView.inputView.element.addEventListener('awesomplete-selectcomplete', function(event) {
-
+        this.titleInputView.fieldView.element.addEventListener('awesomplete-selectcomplete', function(event) {
             //set
             this.autocomplete.liToSelect = event.text.value[1]
             // Reset the value to ensure that the observables are triggered even if the same value is selected.
@@ -237,6 +222,8 @@ export default class InternalLinkFormView extends View {
             this.set(PROPERTY_TITLE, '');
 
             this.set(PROPERTY_INTERNAL_LINK_ID, event.text.value[0]);
+            //has to be set this way (not like the commented out code otherwise it dont work)
+            //this.set( PROPERTY_KEYWORD_ID, event.text.value[1] );
             PROPERTY_KEYWORD_ID = event.text.value[1]
             this.set(PROPERTY_KEYWORD, event.text.label);
         }.bind(this));
@@ -246,7 +233,7 @@ export default class InternalLinkFormView extends View {
     registerAutocompleteKeyUpEvent() {
         let timeout = null;
 
-        this.titleInputView.inputView.element.onkeyup = function(event) {
+        this.titleInputView.fieldView.element.onkeyup = function(event) {
 
             if (event.key == 'ArrowDown'
                 || event.key == 'ArrowUp'
@@ -273,12 +260,12 @@ export default class InternalLinkFormView extends View {
 
     loadAutocompleteData() {
         this.set(PROPERTY_INTERNAL_LINK_ID, '');
-        this.dataContext.getAutocompleteItems(this.titleInputView.inputView.element.value)
+        this.dataContext.getAutocompleteItems(this.titleInputView.fieldView.element.value)
             .then(response => {
                 response.data = response.data.map(
                     obj => {
                         return {
-                            "label" : obj.keyword /*+ ' - ' + this.wikiTitlesToString(obj.searchWikiPage.titles)*/,
+                            "label" : obj.keyword,
                             "value" : [obj.searchWikiPage.id, obj.keywordId],
                             "title" : obj.searchWikiPage.titles
                         }
@@ -288,11 +275,7 @@ export default class InternalLinkFormView extends View {
                 this.autocomplete.list = response.data;
             })
             .catch((e) => {
-                if (e.name === "AxiosError") {
-                    console.log('axiosError', e.code, e.message)
-                } else {
-                    console.log(e);
-                }
+                console.log( 'fetchError', e.code || e.name, e.message || e );
                 this.autocomplete.list = [];
             });
     }
@@ -306,21 +289,4 @@ export default class InternalLinkFormView extends View {
         }
     }
 
-    wikiTitlesToString(list) {
-        return list.join(', ')
-    }
-
 }
-
-/**
- * Fired when the form view is submitted (when one of the children triggered the submit event),
- * e.g. click on {@link #saveButtonView}.
- *
- * @event submit
- */
-
-/**
- * Fired when the form view is canceled, e.g. click on {@link #cancelButtonView}.
- *
- * @event cancel
- */

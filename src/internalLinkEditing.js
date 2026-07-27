@@ -2,9 +2,8 @@
  * @module internalLink/internalLinkEditing
  */
 
-import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
+import { inlineHighlight, Plugin } from 'ckeditor5';
 import {createKeywordIdElement, createLinkElement} from './util/utils';
-import inlineHighlight from '@ckeditor/ckeditor5-typing/src/utils/inlinehighlight';
 import '../theme/editing.css';
 import {
     VIEW_INTERNAL_LINK_TAG,

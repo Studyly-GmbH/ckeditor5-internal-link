@@ -2,24 +2,16 @@
  * @module internalLink/ui/internalLinkActionsView
  */
 
-import View from '@ckeditor/ckeditor5-ui/src/view';
-import ViewCollection from '@ckeditor/ckeditor5-ui/src/viewcollection';
-
-import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
-
-import FocusTracker from '@ckeditor/ckeditor5-utils/src/focustracker';
-import KeystrokeHandler from '@ckeditor/ckeditor5-utils/src/keystrokehandler';
+import { ButtonView, FocusTracker, KeystrokeHandler, View, ViewCollection, IconPencil } from 'ckeditor5';
 
 import { createButton, createFocusCycler, registerFocusableViews } from './uiUtils';
 
 import unlinkIcon from '../../theme/icons/unlink.svg';
-import pencilIcon from '@ckeditor/ckeditor5-core/theme/icons/pencil.svg';
 
 import {
     PROPERTY_INTERNAL_LINK_ID,
     PROPERTY_TITLE
 } from '../util/constants';
-
 import '../../theme/internallinkactions.css';
 
 /**
@@ -119,7 +111,7 @@ export default class InternalLinkActionsView extends View {
          *
          * @member {module:ui/button/buttonview~ButtonView}
          */
-        this.editButtonView = createButton(t('Edit link'), pencilIcon, this.locale);
+        this.editButtonView = createButton(t('Edit link'), IconPencil, this.locale);
         this.editButtonView.delegate('execute').to(this, 'edit');
 
         this.setTemplate({

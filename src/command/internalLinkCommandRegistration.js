@@ -2,7 +2,7 @@
  * @module internalLink/internalLinkCommandRegistration
  */
 
-import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
+import { Plugin } from 'ckeditor5';
 
 import LinkCommand from './internalLinkCommand';
 import UnlinkCommand from './internalUnlinkCommand';

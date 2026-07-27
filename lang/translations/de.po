@@ -4,38 +4,29 @@ msgstr ""
 "Language-Team: German (Samhammer AG)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgctxt "Toolbar button for the internal link action and label of the edit textbox"
 msgid "Internal link"
 msgstr "Artikel-Link"
 
-msgctxt "The unlink button in edit area."
 msgid "Unlink"
 msgstr "Link entfernen"
 
-msgctxt "The edit button in edit area."
 msgid "Edit link"
 msgstr "Link bearbeiten"
 
-msgctxt "Tooltip on the link in edit area."
 msgid "Open link in new tab"
 msgstr "Link in neuem Tab öffnen"
 
-msgctxt "Label of an invalid link in edit area."
 msgid "This link is invalid"
 msgstr "Dieser Link ist ungültig"
 
-msgctxt "Label of an internal link if the title could not be requested."
 msgid "Error requesting title"
 msgstr "Fehler beim Abrufen des Titels"
 
-msgctxt "Placeholder of the autocomplete textbox to find an internal item."
 msgid "Enter title"
 msgstr "Titel eingeben"
 
-msgctxt "The keyword selected"
 msgid "keyword"
 msgstr "Schlüsselbegriff"
 
-msgctxt "show preview of wiki"
 msgid "show preview of wiki"
 msgstr "Wiki-Vorschau anzeigen"

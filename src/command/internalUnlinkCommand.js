@@ -2,7 +2,7 @@
  * @module internalLink/unlinkcommand
  */
 
-import Command from '@ckeditor/ckeditor5-core/src/command';
+import { Command } from 'ckeditor5';
 import findLinkRange from '../util/findlinkrange';
 
 import { MODEL_INTERNAL_LINK_ID_ATTRIBUTE, MODEL_INTERNAL_KEYWORD_ID_ATTRIBUTE } from '../util/constants';

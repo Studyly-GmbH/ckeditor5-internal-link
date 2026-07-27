@@ -2,16 +2,14 @@
  * @module InternalLink/InternalLinkUi
  */
 
-import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
-import ClickObserver from '@ckeditor/ckeditor5-engine/src/view/observer/clickobserver';
+import { ClickObserver, ContextualBalloon, Plugin } from 'ckeditor5';
 
-import ContextualBalloon from '@ckeditor/ckeditor5-ui/src/panel/balloon/contextualballoon';
 import clickOutsideHandler from '../util/utils';
 
 import InternalLinkFormView from './internalLinkFormView';
 import InternalLinkActionsView from './internalLinkActionsView';
 
-import LinkIcon from '../../theme/icons/link.svg';
+import linkIcon from '../../theme/icons/link.svg';
 
 import { createButton } from './uiUtils';
 import { isLinkElement } from '../util/utils';
@@ -101,7 +99,7 @@ export default class InternalLinkUi extends Plugin {
         } );
 
         editor.ui.componentFactory.add(BUTTON_LINK, locale => {
-            const button = createButton(t('Internal link'), LinkIcon, locale);
+            const button = createButton(t('Internal link'), linkIcon, locale);
             button.isEnabled = true;
 
             // Disables the button if the link command is not enabled
@@ -254,7 +252,7 @@ export default class InternalLinkUi extends Plugin {
 
 
         // Form elements should be read-only when corresponding commands are disabled.
-        formView.titleInputView.bind('isReadOnly').to(linkCommand, 'isEnabled', value => !value);
+        formView.titleInputView.fieldView.bind('isReadOnly').to(linkCommand, 'isEnabled', value => !value);
 
         // Execute link command after clicking the "Save" button.
         this.listenTo(formView, 'submit', () => {
@@ -430,7 +428,7 @@ export default class InternalLinkUi extends Plugin {
             position: this.getBalloonPositionData()
         });
 
-        this.formView.titleInputView.select();
+        this.formView.titleInputView.fieldView.focus();
 
         // Make sure that each time the panel shows up, the URL field remains in sync with the value of
         // the command. If the user typed in the input, then canceled the balloon (`titleInputView#value` stays
