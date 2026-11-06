@@ -10,11 +10,11 @@
     "ckeditor5-feature"
   ],
   "dependencies": {
-    "ckeditor5": "48.5.2",
-    "awesomplete": "file:awesomplete"
+    "awesomplete": "file:awesomplete",
+    "ckeditor5": "48.5.2"
   },
   "devDependencies": {
-    "lint-staged": "^16.2.7"
+    "lint-staged": "^16.4.0"
   },
   "engines": {
     "node": ">=6.9.0",
